@@ -16,7 +16,7 @@ public class Main extends Application {
 		Parent root = FXMLLoader.load(getClass().getResource("/boundary/login.fxml"));
 		Scene scene = new Scene(root,900,700);
 		primaryStage.setScene(scene);
-		primaryStage.setTitle("Customer-Fly");
+		primaryStage.setTitle("Customer-Flyy");
 		primaryStage.setResizable(false);
 		primaryStage.centerOnScreen();
 		primaryStage.show();
