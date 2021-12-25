@@ -13,10 +13,10 @@ public class Main extends Application {
 	}
 	@Override
 	public void start(Stage primaryStage) throws Exception {	
-		Parent root = FXMLLoader.load(getClass().getResource("/boundary/login.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/boundary/ImportUpdates.fxml"));
 		Scene scene = new Scene(root,900,700);
 		primaryStage.setScene(scene);
-		primaryStage.setTitle("Customer-Flyy");
+		primaryStage.setTitle("Customer-Fly");
 		primaryStage.setResizable(false);
 		primaryStage.centerOnScreen();
 		primaryStage.show();

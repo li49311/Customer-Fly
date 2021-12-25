@@ -11,11 +11,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -28,6 +26,7 @@ import entity.Seat;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import util.Consts;
+import util.FlightStatus;
 
 public class importControl {
 	
@@ -38,6 +37,11 @@ public class importControl {
 		if (instance == null)
 			instance = new importControl();
 		return instance;
+	}
+	
+	public static  ArrayList<Customer> getCustmersCantSeat()
+	{
+		return custmersCantSeat;
 	}
 	
 	
@@ -60,7 +64,7 @@ public class importControl {
 				Timestamp departureTime = saveTheDate(departure);
 				String landing = (String)item.get("LandingTime");	
 				Timestamp landingTime = saveTheDate(landing);
-				String status = (String)item.get("Status");
+				FlightStatus status = (FlightStatus)item.get("Status");
 				String tailNumber = (String)item.get("TailNumber");		
 				String departureAirportCode = (String)item.get("DepartureAirportCode");
 				String departureCity = (String)item.get("DepartureCity");
@@ -165,7 +169,7 @@ public class importControl {
 				else // insert
 				{
 					toInsert.add(value);
-					insertNewShowInTheater(value);
+					insertFlight(value);
 					++counterInsert;
 				}
 			}
@@ -182,9 +186,9 @@ public class importControl {
 			alert.showAndWait();
 			
 			ArrayList <Customer> tb = new ArrayList<Customer>();
-			for(Flight shIn: toUpdate)
+			for(Flight flight: toUpdate)
 			{
-				tb.addAll(getAllTicketByIDS(shIn));
+				tb.addAll(getAllTicketByIDS(flight));
 			}
 			
 			return tb;		
@@ -306,7 +310,7 @@ public class importControl {
 			return buyersList;	
 		}
 		
-		public static boolean insertNewShowInTheater(Flight flight) throws ClassNotFoundException, SQLException
+		public static boolean insertFlight(Flight flight) throws ClassNotFoundException, SQLException
 		{
 			
 //			if(!isExistAirplane(flight.getAirplane()))

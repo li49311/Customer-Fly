@@ -2,16 +2,18 @@ package entity;
 
 import java.sql.Timestamp;
 
+import util.FlightStatus;
+
 public class Flight {
 	
 	private String flightNum;
 	private Timestamp departureTime;
 	private Timestamp landingTime;
-	private String status;
+	private FlightStatus status;
 	private Airplane airplane;
 	private Airport departureAirport;
 	private Airport landingAirport;
-	public Flight(String flightNum, Timestamp departureTime, Timestamp landingTime, String status, Airplane airplane,
+	public Flight(String flightNum, Timestamp departureTime, Timestamp landingTime, FlightStatus status, Airplane airplane,
 			Airport departureAirport, Airport landingAirport) {
 		super();
 		this.flightNum = flightNum;
@@ -47,10 +49,10 @@ public class Flight {
 	public void setLandingTime(Timestamp landingTime) {
 		this.landingTime = landingTime;
 	}
-	public String getStatus() {
+	public FlightStatus getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(FlightStatus status) {
 		this.status = status;
 	}
 	public Airplane getAirplane() {
