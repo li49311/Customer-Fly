@@ -16,5 +16,8 @@
 	<classpathentry kind="lib" path="lib/javafx.web.jar"/>
 	<classpathentry kind="lib" path="lib/javafx-swt.jar"/>
 	<classpathentry kind="lib" path="lib/src.zip"/>
+	<classpathentry kind="lib" path="lib/java-json.jar"/>
+	<classpathentry kind="lib" path="lib/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/json-simple-2.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
