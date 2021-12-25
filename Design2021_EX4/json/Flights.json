@@ -3,7 +3,7 @@
 		{
 			"FlightNum" : 7,
 			"DepartureTime":"2022-02-27 06:00:00.000000",
-			"LandingTime" : "2022-02-27 12:00:00.000000,
+			"LandingTime" : "2022-02-27 12:00:00.000000",
 			"Status":"On-time",
 			"TailNumber":"4X-ABB",
 			"DepartureAirportCode":"TLV",
@@ -16,7 +16,7 @@
 		{
 			"FlightNum" : 8,
 			"DepartureTime":"2022-02-28 06:00:00.000000",
-			"LandingTime" : "2022-02-27 08:00:00.000000,
+			"LandingTime" : "2022-02-27 08:00:00.000000",
 			"Status":"On-time",
 			"TailNumber":"4X-ABc",
 			"DepartureAirportCode":"TLV",
@@ -29,7 +29,7 @@
 		{
 			"FlightNum" : 9,
 			"DepartureTime":"2022-03-01 23:00:00.000000",
-			"LandingTime" : "2022-03-02 09:00:00.000000,
+			"LandingTime" : "2022-03-02 09:00:00.000000",
 			"Status":"On-time",
 			"TailNumber":"4X-ABE",
 			"DepartureAirportCode":"TLV",
@@ -42,7 +42,7 @@
 		{
 			"FlightNum" : 10,
 			"DepartureTime":"2022-03-05 06:00:00.000000",
-			"LandingTime" : "2022-02-27 14:00:00.000000,
+			"LandingTime" : "2022-02-27 14:00:00.000000",
 			"Status":"On-time",
 			"TailNumber":"4X-ABF",
 			"DepartureAirportCode":"TLV",
