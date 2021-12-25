@@ -21,6 +21,13 @@ public class Consts
 	
 	public static final String SQL_AIRPLANE_EXIST = "call quer_is_airplane_exist(?)";
 	public static final String SQL_AIRPORT_EXIST = "call quer_is_airport_exist(?)";
+	
+	public static final String SQL_INS_FLIGHT = "{ call quer_insert_flight(?,?,?,?,?,?,?) }";
+	public static final String SQL_INS_AIRPLANE = "{ call quer_insert_airplane(?) }";
+	public static final String SQL_INS_AIRPORT = "{ call quer_insert_airport(?,?,?) }";
+	
+	public static final String SQL_UPDATE_AIRPORT = "{ call quer_update_airport(?,?,?) }";
+	public static final String SQL_UPDATE_FLIGHT = "{ call quer_update_flight(?,?,?,?,?,?,?) }";
 
 	
 	

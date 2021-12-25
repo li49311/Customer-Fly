@@ -1,23 +1,23 @@
 {
 	"Flights":[
 		{
-			"FlightNum" : 7,
+			"FlightNum" : "6",
 			"DepartureTime":"2022-02-27 06:00:00.000000",
 			"LandingTime" : "2022-02-27 12:00:00.000000",
-			"Status":"On-time",
+			"Status":"Delayed",
 			"TailNumber":"4X-ABB",
 			"DepartureAirportCode":"TLV",
-			"LandingAirportCode":"MAD",
+			"LandingAirportCode":"IBZ",
 			"DepartureCity" : "Tel Aviv",
 			"DepartureCountry" : "Israel",
-			"DestinationCity" : "Madrid",
+			"DestinationCity" : "Ibiza",
 			"DestinationCountry" : "Spain"
 		},
 		{
-			"FlightNum" : 8,
+			"FlightNum" : "8",
 			"DepartureTime":"2022-02-28 06:00:00.000000",
 			"LandingTime" : "2022-02-27 08:00:00.000000",
-			"Status":"On-time",
+			"Status":"OnTime",
 			"TailNumber":"4X-ABc",
 			"DepartureAirportCode":"TLV",
 			"LandingAirportCode":"ATH",
@@ -27,10 +27,10 @@
 			"DestinationCountry" : "Greece"
 		},
 		{
-			"FlightNum" : 9,
+			"FlightNum" : "9",
 			"DepartureTime":"2022-03-01 23:00:00.000000",
 			"LandingTime" : "2022-03-02 09:00:00.000000",
-			"Status":"On-time",
+			"Status":"OnTime",
 			"TailNumber":"4X-ABE",
 			"DepartureAirportCode":"TLV",
 			"LandingAirportCode":"JFK",
@@ -40,10 +40,10 @@
 			"DestinationCountry" : "USA"
 		},
 		{
-			"FlightNum" : 10,
+			"FlightNum" : "10",
 			"DepartureTime":"2022-03-05 06:00:00.000000",
 			"LandingTime" : "2022-02-27 14:00:00.000000",
-			"Status":"On-time",
+			"Status":"OnTime",
 			"TailNumber":"4X-ABF",
 			"DepartureAirportCode":"TLV",
 			"LandingAirportCode":"SVO",

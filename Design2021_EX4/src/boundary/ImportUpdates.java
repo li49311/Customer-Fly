@@ -7,6 +7,7 @@ import entity.Customer;
 import entity.Flight;
 import entity.FlightTicket;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -37,12 +38,11 @@ public class ImportUpdates {
 	public void initialize() {
 
 		notifyButton.setDisable(true);
-		
 	}
 
 
 	@FXML
-	public void importJSON(MouseEvent event)
+	public void importJSON(ActionEvent event)
 	{
 		ArrayList<Customer> customerList = importControl.getAllNeedToCall();
 		addToList(customerList);

@@ -1,7 +1,7 @@
 package util;
 
 public enum FlightStatus {
-	onTime,
-	delayed,
-	canceled
+	OnTime,
+	Delayed,
+	cancelled
 }

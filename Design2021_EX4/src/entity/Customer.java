@@ -11,13 +11,12 @@ public class Customer {
 	private String phoneNum;
 	private String primaryCitizenship;
 	private Date birthDate;
-	public Customer(int passportNum, String firstName, String lastName, String email, String phoneNum) {
+	public Customer(int passportNum, String firstName, String lastName, String email) {
 		super();
 		this.passportNum = passportNum;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
-		this.phoneNum = phoneNum;
 	}
 	public int getPassportNum() {
 		return passportNum;
@@ -49,23 +48,14 @@ public class Customer {
 	public void setPhoneNum(String phoneNum) {
 		this.phoneNum = phoneNum;
 	}
-	public String getPrimaryCitizenship() {
-		return primaryCitizenship;
-	}
-	public void setPrimaryCitizenship(String primaryCitizenship) {
-		this.primaryCitizenship = primaryCitizenship;
-	}
 	public Date getBirthDate() {
 		return birthDate;
 	}
 	public void setBirthDate(Date birthDate) {
 		this.birthDate = birthDate;
 	}
-	
-	
-	
-	
-	
-	
-
+	@Override
+	public String toString() {
+		return "firstName=" + firstName + ", lastName=" + lastName;
+	}
 }

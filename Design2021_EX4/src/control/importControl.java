@@ -41,6 +41,7 @@ public class importControl {
 	
 	public static  ArrayList<Customer> getCustmersCantSeat()
 	{
+		System.out.println(custmersCantSeat);
 		return custmersCantSeat;
 	}
 	
@@ -64,7 +65,7 @@ public class importControl {
 				Timestamp departureTime = saveTheDate(departure);
 				String landing = (String)item.get("LandingTime");	
 				Timestamp landingTime = saveTheDate(landing);
-				FlightStatus status = (FlightStatus)item.get("Status");
+				String status = (String)item.get("Status");
 				String tailNumber = (String)item.get("TailNumber");		
 				String departureAirportCode = (String)item.get("DepartureAirportCode");
 				String departureCity = (String)item.get("DepartureCity");
@@ -77,7 +78,7 @@ public class importControl {
 				Airport to = new Airport(landingAirportCode, landingCity, landingCountry);
 				Airplane airplane = new Airplane(tailNumber);
 				
-				Flight flight = new Flight(flightNum, departureTime, landingTime, status, airplane, from, to);
+				Flight flight = new Flight(flightNum, departureTime, landingTime, FlightStatus.valueOf(status), airplane, from, to);
 
 				ourJsonResult.add(flight);		
 			}
@@ -154,17 +155,16 @@ public class importControl {
 				String flightNum = value.getFlightNum();
 				//System.out.println(value);
 				
-				List<String> myKey = new ArrayList<String>();
-				myKey.add(flightNum);
-				
-				Boolean isExist = flightIDs.contains(myKey);
+				Boolean isExist = flightIDs.contains(flightNum);
 
 			try {	
 				if(isExist) //update
 				{
+					toUpdate.add(value);
+					updateFlight(value);
+					++counterUpdate;
 					//System.out.println("update "+ value);
-					custmersCantSeat.addAll(isProblemWithUpdateSeats(value)); // this will save all the problematic customers 
-					
+					custmersCantSeat.addAll(isProblemWithUpdateSeats(value)); // this will save all the problematic customers 				
 				}
 				else // insert
 				{
@@ -186,8 +186,10 @@ public class importControl {
 			alert.showAndWait();
 			
 			ArrayList <Customer> tb = new ArrayList<Customer>();
+			System.out.println(toUpdate);
 			for(Flight flight: toUpdate)
 			{
+				System.out.println(getAllTicketByIDS(flight));
 				tb.addAll(getAllTicketByIDS(flight));
 			}
 			
@@ -275,7 +277,6 @@ public class importControl {
 			String fname;
 			String lname;
 			String mail;
-			String phoneNum;
 			
 			try {
 				Class.forName(Consts.JDBC_STR);
@@ -294,10 +295,8 @@ public class importControl {
 							fname = (rs.getString(i++));
 							lname = (rs.getString(i++));
 							mail = (rs.getString(i++));
-							phoneNum = (rs.getString(i++));
 							
-							Customer cust = new Customer(passportNum, fname, lname, mail, phoneNum);
-							//System.out.println(tB);
+							Customer cust = new Customer(passportNum, fname, lname, mail);
 							buyersList.add(cust);
 						}
 				} catch (SQLException e) {
@@ -306,46 +305,112 @@ public class importControl {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-			
 			return buyersList;	
+		}
+		
+		public static boolean updateFlight(Flight flight) throws ClassNotFoundException, SQLException
+		{
+			if(!updateAirport(flight.getDepartureAirport()) || !updateAirport(flight.getLandingAirport()))
+			{
+				return false;
+			}	
+			//inserting to showInTheater
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_UPDATE_FLIGHT)){
+				int i = 1;
+				stmt.setTimestamp(i++,flight.getDepartureTime());
+				stmt.setTimestamp(i++,flight.getLandingTime());
+				stmt.setString(i++, flight.getStatus().toString());
+				stmt.setString(i++, flight.getAirplane().getTailNumber());
+				stmt.setString(i++, flight.getDepartureAirport().getAirportCode());
+				stmt.setString(i++, flight.getLandingAirport().getAirportCode());
+				stmt.setString(i++, flight.getFlightNum());
+				stmt.executeUpdate();
+			}
+			return true;
+		}
+		
+		//this method UPDATING new Show to DB
+		private static boolean updateAirport(Airport airport) throws ClassNotFoundException, SQLException
+		{
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_UPDATE_AIRPORT)){
+				int i = 1;
+				stmt.setString(i++, airport.getCity());
+				stmt.setString(i++, airport.getCountry());
+				stmt.setString(i++, airport.getAirportCode());
+				stmt.executeUpdate();		
+			}
+			return true;	
 		}
 		
 		public static boolean insertFlight(Flight flight) throws ClassNotFoundException, SQLException
 		{
 			
-//			if(!isExistAirplane(flight.getAirplane()))
-//			{
-//				insertAirplane(b.getShow());
-//			}
-//			
-//			if(!isExistAirport(flight.getDepartureAirport()))
-//			{
-//				insertAirport(b.getTheater());
-//			}
-//			
-//			if(!isExistAirport(flight.getLandingAirport()))
-//			{
-//				insertAirport(b.getTheater());
-//			}
-//						
-//			//inserting to flight
-//			Class.forName(Consts.JDBC_STR);
-//			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
-//					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_INS_SHOW_IN_THEATER)){
-//				int i = 1;
-//				stmt.setInt(i++, b.getTheater().getTheaterID());
-//				stmt.setInt(i++, b.getShow().getId());
-//				stmt.setInt(i++, b.getBasicTicketPrice());
-//				stmt.setDate(i++, b.getDate());
-//				stmt.setTime(i++, b.getStartHour());
-//				stmt.setString(i++, b.getStatus());
-//				stmt.setDate(i++, b.getUpdateDate());
-//				stmt.executeUpdate();
-//			}
-//			return true;	
-			return false;
+			if(!isExistAirplane(flight.getAirplane()))
+			{
+				insertAirplane(flight.getAirplane());
+			}
+			
+			if(!isExistAirport(flight.getDepartureAirport()))
+			{
+				insertAirport(flight.getDepartureAirport());
+			}
+			
+			if(!isExistAirport(flight.getLandingAirport()))
+			{
+				System.out.println(flight.getLandingAirport().getAirportCode());
+				insertAirport(flight.getLandingAirport());
+			}
+						
+			//inserting to flight
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_INS_FLIGHT)){
+				int i = 1;
+				stmt.setString(i++,flight.getFlightNum());
+				stmt.setTimestamp(i++, flight.getDepartureTime());
+				stmt.setTimestamp(i++, flight.getLandingTime());
+				stmt.setString(i++, flight.getStatus().toString());
+				stmt.setString(i++, flight.getAirplane().getTailNumber());
+				stmt.setString(i++, flight.getDepartureAirport().getAirportCode());
+				stmt.setString(i++, flight.getLandingAirport().getAirportCode());
+				
+				stmt.executeUpdate();
+			}
+			return true;	
 		}
 		
+		private static boolean insertAirplane(Airplane plane) throws ClassNotFoundException, SQLException
+		{
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_INS_AIRPLANE)){
+				int i = 1;	
+				stmt.setString(i++, plane.getTailNumber());
+				stmt.executeUpdate();
+				
+			}
+			return true;	
+		}
+		
+		private static boolean insertAirport(Airport airport) throws ClassNotFoundException, SQLException
+		{
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_INS_AIRPORT)){
+				int i = 1;	
+				stmt.setString(i++, airport.getAirportCode());
+				stmt.setString(i++, airport.getCity());
+				stmt.setString(i++, airport.getCountry());
+				
+				stmt.executeUpdate();
+			}
+			return true;	
+		}
+
 		private static boolean isExistAirplane(Airplane myAirplane)
 		{
 			String id = myAirplane.getTailNumber();
@@ -398,7 +463,7 @@ public class importControl {
 				e.printStackTrace();
 			}
 			
-			if(airportCode.isEmpty())
+			if(airportCode.equals(""))
 				return false;
 			return true;
 		}
