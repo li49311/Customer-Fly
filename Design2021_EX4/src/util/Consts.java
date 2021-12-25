@@ -13,6 +13,14 @@ public class Consts
 	protected static final String DB_FILEPATH = getDBPath();
 	public static final String CONN_STR = "jdbc:ucanaccess://" + DB_FILEPATH + ";COLUMNORDER=DISPLAY";
 	public static final String JDBC_STR = "net.ucanaccess.jdbc.UcanaccessDriver";
+	
+	
+	public static final String SQL_SEL_FLIGHT ="SELECT tbl_Flight.FlightNum FROM tbl_Flight;";
+	public static final String SQL_SEL_CUSTOMERS_BY_FLIGHT = "call sql_customers_for_flight(?)";
+	public static final String SQL_SEL_SEATS_BY_PLANE = "call quer_seats_by_plane(?)";
+	
+	public static final String SQL_AIRPLANE_EXIST = "call quer_is_airplane_exist(?)";
+	public static final String SQL_AIRPORT_EXIST = "call quer_is_airport_exist(?)";
 
 	
 	

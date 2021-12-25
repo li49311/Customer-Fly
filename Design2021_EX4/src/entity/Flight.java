@@ -8,20 +8,27 @@ public class Flight {
 	private Timestamp departureTime;
 	private Timestamp landingTime;
 	private String status;
-	private String tailNumber;
-	private String departureAirport;
-	private String landingAirport;
-	public Flight(String flightNum, Timestamp departureTime, Timestamp landingTime, String status, String tailNumber,
-			String departureAirport, String landingAirport) {
+	private Airplane airplane;
+	private Airport departureAirport;
+	private Airport landingAirport;
+	public Flight(String flightNum, Timestamp departureTime, Timestamp landingTime, String status, Airplane airplane,
+			Airport departureAirport, Airport landingAirport) {
 		super();
 		this.flightNum = flightNum;
 		this.departureTime = departureTime;
 		this.landingTime = landingTime;
 		this.status = status;
-		this.tailNumber = tailNumber;
+		this.airplane = airplane;
 		this.departureAirport = departureAirport;
 		this.landingAirport = landingAirport;
 	}
+	
+	public Flight(String flightNum) {
+		super();
+		this.flightNum = flightNum;
+	}
+
+
 	public String getFlightNum() {
 		return flightNum;
 	}
@@ -46,22 +53,22 @@ public class Flight {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public String getTailNumber() {
-		return tailNumber;
+	public Airplane getAirplane() {
+		return airplane;
 	}
-	public void setTailNumber(String tailNumber) {
-		this.tailNumber = tailNumber;
+	public void setTailNumber(Airplane airplane) {
+		this.airplane = airplane;
 	}
-	public String getDepartureAirport() {
+	public Airport getDepartureAirport() {
 		return departureAirport;
 	}
-	public void setDepartureAirport(String departureAirport) {
+	public void setDepartureAirport(Airport departureAirport) {
 		this.departureAirport = departureAirport;
 	}
-	public String getLandingAirport() {
+	public Airport getLandingAirport() {
 		return landingAirport;
 	}
-	public void setLandingAirport(String landingAirport) {
+	public void setLandingAirport(Airport landingAirport) {
 		this.landingAirport = landingAirport;
 	}
 	
