@@ -16,6 +16,7 @@ public class Consts
 	
 	
 	public static final String SQL_SEL_FLIGHT ="SELECT tbl_Flight.FlightNum FROM tbl_Flight;";
+	public static final String SQL_SEL_FLIGHTTICKET_BY_CUSTOMER = "call quer_tickets_by_customer(?)";
 	public static final String SQL_SEL_CUSTOMERS_BY_FLIGHT = "call sql_customers_for_flight(?)";
 	public static final String SQL_SEL_SEATS_BY_PLANE = "call quer_seats_by_plane(?)";
 	

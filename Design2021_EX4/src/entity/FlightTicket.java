@@ -4,17 +4,18 @@ public class FlightTicket {
 	
 	private int orderNum;
 	private int ticketNum;
-	private Customer customer;
-	private Flight flight;
+	private int customerPassportNum;
+	private String flightNum;
 	
-	public FlightTicket(int orderNum, int ticketNum, Customer customer, Flight flight) {
+	
+	public FlightTicket(int orderNum, int ticketNum, int customerPassportNum, String flightNum) {
 		super();
 		this.orderNum = orderNum;
 		this.ticketNum = ticketNum;
-		this.customer = customer;
-		this.flight = flight;
+		this.customerPassportNum = customerPassportNum;
+		this.flightNum = flightNum;
 	}
-
+	
 	public int getOrderNum() {
 		return orderNum;
 	}
@@ -31,22 +32,26 @@ public class FlightTicket {
 		this.ticketNum = ticketNum;
 	}
 
-	public Customer getCustomer() {
-		return customer;
+	public int getCustomerPassportNum() {
+		return customerPassportNum;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setCustomerPassportNum(int customerPassportNum) {
+		this.customerPassportNum = customerPassportNum;
 	}
 
-	public Flight getFlight() {
-		return flight;
+	public String getFlightNum() {
+		return flightNum;
 	}
 
-	public void setFlight(Flight flight) {
-		this.flight = flight;
+	public void setFlightNum(String flightNum) {
+		this.flightNum = flightNum;
 	}
+
 	
+	
+
+
 	
 
 }

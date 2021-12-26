@@ -22,6 +22,7 @@ import entity.Airplane;
 import entity.Airport;
 import entity.Customer;
 import entity.Flight;
+import entity.FlightTicket;
 import entity.Seat;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
