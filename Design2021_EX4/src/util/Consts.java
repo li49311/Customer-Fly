@@ -26,6 +26,7 @@ public class Consts
 	public static final String SQL_INS_FLIGHT = "{ call quer_insert_flight(?,?,?,?,?,?,?) }";
 	public static final String SQL_INS_AIRPLANE = "{ call quer_insert_airplane(?) }";
 	public static final String SQL_INS_AIRPORT = "{ call quer_insert_airport(?,?,?) }";
+	public static final String SQL_INS_SEAT = "{ call quer_insert_seat(?,?,?,?) }";
 	
 	public static final String SQL_UPDATE_AIRPORT = "{ call quer_update_airport(?,?,?) }";
 	public static final String SQL_UPDATE_FLIGHT = "{ call quer_update_flight(?,?,?,?,?,?,?) }";

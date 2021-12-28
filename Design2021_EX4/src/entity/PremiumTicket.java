@@ -10,7 +10,7 @@ public class PremiumTicket extends FlightTicket {
 
 	public PremiumTicket(int orderNum, int ticketNum, Customer customer, Flight flight, double luggageWeight,
 			String request1, String request2, String request3) {
-		super(orderNum, ticketNum, customer, flight);
+		super(orderNum, ticketNum, customer.getPassportNum(), flight.getFlightNum());
 		this.luggageWeight = luggageWeight;
 		Request1 = request1;
 		Request2 = request2;

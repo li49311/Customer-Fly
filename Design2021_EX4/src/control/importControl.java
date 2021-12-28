@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+
+import org.json.JSONException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -22,7 +23,6 @@ import entity.Airplane;
 import entity.Airport;
 import entity.Customer;
 import entity.Flight;
-import entity.FlightTicket;
 import entity.Seat;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -53,6 +53,7 @@ public class importControl {
 
 		try 
 		{
+
 			JSONObject obj = (JSONObject) new JSONParser().parse(new FileReader("json/Flights.json"));
 			JSONArray jo = (JSONArray) obj.get("Flights") ; 
 			Iterator<JSONObject> iterator = jo.iterator();
@@ -74,10 +75,28 @@ public class importControl {
 				String landingAirportCode = (String)item.get("LandingAirportCode");
 				String landingCity = (String)item.get("DestinationCity");
 				String landingCountry = (String)item.get("DestinationCountry");
+				
+				JSONArray jo2 = (JSONArray) item.get("SeatsInFlight");
+				Iterator<JSONObject> iterator2 = jo2.iterator();
+				HashSet<Seat> seatsInAirplane = new HashSet<Seat>();
+				while(iterator2.hasNext())
+				{
+					JSONObject item2 = iterator2.next();
+				
+					//Flight
+					int rowNum = Integer.parseInt((String)item2.get("Row"));
+					String seatNum = (String)item2.get("Seat");	
+					String seatClass = (String)item2.get("Class");	
+					
+					Seat seat = new Seat(rowNum, seatNum, seatClass, tailNumber);
+					
+					seatsInAirplane.add(seat);
+				}
 			
 				Airport from = new Airport(departureAirportCode, departureCity, departureCountry);
 				Airport to = new Airport(landingAirportCode, landingCity, landingCountry);
-				Airplane airplane = new Airplane(tailNumber);
+				Airplane airplane = new Airplane(tailNumber, seatsInAirplane);
+				System.out.println(seatsInAirplane);
 				
 				Flight flight = new Flight(flightNum, departureTime, landingTime, FlightStatus.valueOf(status), airplane, from, to);
 
@@ -235,6 +254,10 @@ public class importControl {
 		}
 		
 		private static int getMaxCapacity(Airplane airplane) {
+			return getSeatsByAirplane(airplane).size();	
+		}
+		
+		private static ArrayList<Seat> getSeatsByAirplane(Airplane airplane) {
 			ArrayList<Seat> seatsInPlane = new ArrayList<Seat>();
 			int rowNum;
 			String seatNum;
@@ -266,8 +289,9 @@ public class importControl {
 				e.printStackTrace();
 			}
 			
-			return seatsInPlane.size();	
+			return seatsInPlane;	
 		}
+
 
 
 		public static ArrayList<Customer> getAllTicketByIDS(Flight flight)
@@ -385,7 +409,7 @@ public class importControl {
 		}
 		
 		private static boolean insertAirplane(Airplane plane) throws ClassNotFoundException, SQLException
-		{
+		{		
 			Class.forName(Consts.JDBC_STR);
 			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
 					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_INS_AIRPLANE)){
@@ -394,9 +418,32 @@ public class importControl {
 				stmt.executeUpdate();
 				
 			}
+			
+			ArrayList<Seat> seats = getSeatsByAirplane(plane);
+			for(Seat s: plane.getSeats()) {
+				if(!seats.contains(s))
+					insertSeat(s);
+			}
 			return true;	
 		}
 		
+		private static boolean insertSeat(Seat s) throws ClassNotFoundException, SQLException {
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_INS_SEAT)){
+				int i = 1;	
+				stmt.setInt(i++, s.getRowNum());
+				stmt.setString(i++, s.getSeatNum());
+				stmt.setString(i++, s.getTailNumber());
+				stmt.setString(i++, s.getSeatClass());
+				
+				stmt.executeUpdate();
+				
+			}
+			return true;	
+			
+		}
+
 		private static boolean insertAirport(Airport airport) throws ClassNotFoundException, SQLException
 		{
 			Class.forName(Consts.JDBC_STR);

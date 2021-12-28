@@ -11,7 +11,74 @@
 			"DepartureCity" : "Tel Aviv",
 			"DepartureCountry" : "Israel",
 			"DestinationCity" : "Ibiza",
-			"DestinationCountry" : "Spain"
+			"DestinationCountry" : "Spain",
+			"SeatsInFlight":[
+				{
+					"Row":"1"
+					"Seat":"A"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"A"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"A"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"B"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"B"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"B"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"C"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"C"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"C"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"D"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"D"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"D"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"A"
+					"Class":"first"
+				}
+			]
 		},
 		{
 			"FlightNum" : "8",
@@ -25,6 +92,73 @@
 			"DepartureCountry" : "Israel",
 			"DestinationCity" : "Athens",
 			"DestinationCountry" : "Greece"
+			"SeatsInFlight":[
+				{
+					"Row":"1"
+					"Seat":"A"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"A"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"A"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"B"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"B"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"B"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"C"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"C"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"C"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"D"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"D"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"D"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"A"
+					"Class":"first"
+				}
+			]
 		},
 		{
 			"FlightNum" : "9",
@@ -38,19 +172,153 @@
 			"DepartureCountry" : "Israel",
 			"DestinationCity" : "New York",
 			"DestinationCountry" : "USA"
+			"SeatsInFlight":[
+				{
+					"Row":"1"
+					"Seat":"A"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"A"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"A"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"B"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"B"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"B"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"C"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"C"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"C"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"D"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"D"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"D"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"A"
+					"Class":"first"
+				}
+			]
 		},
 		{
-			"FlightNum" : "10",
+			"FlightNum" : "13",
 			"DepartureTime":"2022-03-05 06:00:00.000000",
 			"LandingTime" : "2022-02-27 14:00:00.000000",
 			"Status":"OnTime",
-			"TailNumber":"4X-ABF",
+			"TailNumber":"4X-ABA",
 			"DepartureAirportCode":"TLV",
 			"LandingAirportCode":"SVO",
 			"DepartureCity" : "Tel Aviv",
 			"DepartureCountry" : "Israel",
 			"DestinationCity" : "Moscow",
 			"DestinationCountry" : "Russia"
+			"SeatsInFlight":[
+				{
+					"Row":"1"
+					"Seat":"A"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"A"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"A"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"B"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"B"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"B"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"C"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"C"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"C"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"D"
+					"Class":"first"
+				},
+				{
+					"Row":"2"
+					"Seat":"D"
+					"Class":"economy"
+				},
+				{
+					"Row":"3"
+					"Seat":"D"
+					"Class":"buisness"
+				},
+				{
+					"Row":"1"
+					"Seat":"A"
+					"Class":"first"
+				}
+			]
 		}
 	]
 }
