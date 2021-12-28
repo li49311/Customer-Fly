@@ -9,8 +9,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -19,11 +21,15 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import boundary.ShowInTheater;
 import entity.Airplane;
 import entity.Airport;
 import entity.Customer;
 import entity.Flight;
 import entity.Seat;
+import entity.Show;
+import entity.Theater;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import util.Consts;
@@ -515,4 +521,135 @@ public class importControl {
 				return false;
 			return true;
 		}
+		
+		
+	//This method will notify the user on the new details of the show
+	public static ArrayList<Flight> recommendUserNewDetails(Customer customer)
+	{
+		ArrayList<Flight> chacngedFlights = importFlights();
+		
+		//For each flight that the customer has booked and canceled, we will offer alternative offers
+		for (Flight f: chacngedFlights) {
+			//returns all the customers in this flight
+			ArrayList<Customer> customers = getAllTicketByIDS(f);
+			if (customers.contains(customer))
+			{
+				Airport from = f.getDepartureAirport();
+				Airport to = f.getLandingAirport();
+				LocalDateTime oldFlightDate = f.getDepartureTime().toLocalDateTime(); //because we want the oldDate
+				LocalDateTime dtFrom = oldFlightDate.minusWeeks(2); //this date is the show date minus 2 weeks
+				LocalDateTime dtTo =  oldFlightDate.plusWeeks(2); //this date is the show date plus 2 weeks
+				LocalDateTime dtNow = LocalDateTime.now();
+				
+				if(dtFrom.isBefore(dtNow))// if we dont have 2 weeks alert
+				{
+					dtNow = LocalDateTime.now().plusWeeks(2);
+					dtFrom = dtNow;
+				}
+				
+				ArrayList<Flight> flightList = getAllRecomByParmWithoutSeats(from.getAirportCode(), to.getAirportCode(),dtTo, dtFrom);
+				ArrayList<Flight> toReturn = new ArrayList<Flight>();
+				
+				for(Flight fl: flightList)
+				{
+					if(canBeThere(fl, customer.getAmountOfTickets()))
+						//TODO we need to return also the class of each seat in the order
+					{
+						toReturn.add(fl);
+					}
+				}	
+				return toReturn;			
+			}
+		}			
+	}
+	
+	//This method get airports and dates, then return the all flights between the parm
+	private static ArrayList<Flight> getAllRecomByParmWithoutSeats(String airportCode, String airportCode2,
+			LocalDateTime dtTo, LocalDateTime dtFrom) {
+
+		ArrayList<Flight> FlightsList = new ArrayList<Flight>();
+		
+		/*int showId;
+		String showName;
+		int showLength;
+		Boolean hasBreak;
+		int theaterId;
+		String theaterName;
+		String managerName;
+		String citySql;
+		int maxCapacity;
+		int maxInCapsule;
+		int price;
+		java.sql.Date dateOfShow; 
+		java.sql.Time startHour;
+		String status;
+		java.sql.Date updateDate;
+		*/
+				
+		try {
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					CallableStatement callst = conn.prepareCall(Consts.SQL_SEL_ALL_SHOWS_RECOM))
+			{
+				int k=1;
+				//callst.setDate(k++, dtPast);
+				callst.setDate(k++, dtFuture);
+				callst.setDate(k++, dtPast);
+				callst.setString(k++, city);
+			
+				ResultSet rs = callst.executeQuery();
+				while (rs.next()) 
+				{
+					int i =1;
+					showId = (rs.getInt(i++));
+					showName = (rs.getString(i++));
+					showLength = (rs.getInt(i++));
+					hasBreak = (rs.getBoolean(i++));
+					theaterId = (rs.getInt(i++));
+					theaterName = (rs.getString(i++));
+					managerName =  (rs.getString(i++));
+					citySql = (rs.getString(i++));
+					maxCapacity = (rs.getInt(i++));
+					price = (rs.getInt(i++));
+					maxInCapsule=(rs.getInt(i++));
+					dateOfShow = (rs.getDate(i++));
+					startHour = (rs.getTime(i++));
+					status = (rs.getString(i++));
+					updateDate = (rs.getDate(i++));
+					
+					Show sh = new Show(showId, showName, showLength, hasBreak);
+					Theater th = new Theater(theaterId, theaterName, maxCapacity, managerName, citySql, maxInCapsule);
+					ShowInTheater shIn = new ShowInTheater(th, sh, dateOfShow, startHour, price, updateDate, status);
+					showList.add(shIn); 
+				}
+
+				return showList;
+
+			} catch (SQLException e) {
+
+				e.printStackTrace();
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return showList;
+	}
+	
+	//this method will get ShowInTheater and amount of tickets and return if someone can sit there
+	public static boolean canBeThere(Flight flight, int amount)
+	{
+		
+		int maxCapacityInAirplane = flight.getAirplane().getSeats().size();
+		
+		ArrayList<Seat> seats = getSeatsByAirplane(flight.getAirplane());
+		//TODO find how much available seat exists in this airplane
+		int availableSeats;
+		
+		if (amount - availableSeats < maxCapacityInAirplane)	 {
+			return true;
+		}
+
+		
+		return false;
+	}
 }

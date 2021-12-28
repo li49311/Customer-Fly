@@ -11,6 +11,8 @@ public class Customer {
 	private String phoneNum;
 	private String primaryCitizenship;
 	private Date birthDate;
+	
+	
 	public Customer(int passportNum, String firstName, String lastName, String email) {
 		super();
 		this.passportNum = passportNum;

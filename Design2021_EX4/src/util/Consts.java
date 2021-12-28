@@ -19,6 +19,7 @@ public class Consts
 	public static final String SQL_SEL_FLIGHTTICKET_BY_CUSTOMER = "call quer_tickets_by_customer(?)";
 	public static final String SQL_SEL_CUSTOMERS_BY_FLIGHT = "call sql_customers_for_flight(?)";
 	public static final String SQL_SEL_SEATS_BY_PLANE = "call quer_seats_by_plane(?)";
+	public static final String SQL_SEL_ALL_SHOWS_RECOM = "call quer_recommend_New_Flights(?)";
 	
 	public static final String SQL_AIRPLANE_EXIST = "call quer_is_airplane_exist(?)";
 	public static final String SQL_AIRPORT_EXIST = "call quer_is_airport_exist(?)";

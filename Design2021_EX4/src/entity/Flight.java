@@ -1,6 +1,7 @@
 package entity;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import util.FlightStatus;
 
@@ -13,8 +14,24 @@ public class Flight {
 	private Airplane airplane;
 	private Airport departureAirport;
 	private Airport landingAirport;
-	public Flight(String flightNum, Timestamp departureTime, Timestamp landingTime, FlightStatus status, Airplane airplane,
-			Airport departureAirport, Airport landingAirport) {
+	private Date updateDate;
+	
+	
+	public Flight(String flightNum, Timestamp departureTime, Timestamp landingTime, FlightStatus status,
+			Airplane airplane, Airport departureAirport, Airport landingAirport, Date updateDate) {
+		super();
+		this.flightNum = flightNum;
+		this.departureTime = departureTime;
+		this.landingTime = landingTime;
+		this.status = status;
+		this.airplane = airplane;
+		this.departureAirport = departureAirport;
+		this.landingAirport = landingAirport;
+		this.updateDate = updateDate;
+	}
+	
+	public Flight(String flightNum, Timestamp departureTime, Timestamp landingTime, FlightStatus status,
+			Airplane airplane, Airport departureAirport, Airport landingAirport) {
 		super();
 		this.flightNum = flightNum;
 		this.departureTime = departureTime;
@@ -25,12 +42,6 @@ public class Flight {
 		this.landingAirport = landingAirport;
 	}
 	
-	public Flight(String flightNum) {
-		super();
-		this.flightNum = flightNum;
-	}
-
-
 	public String getFlightNum() {
 		return flightNum;
 	}
@@ -58,7 +69,7 @@ public class Flight {
 	public Airplane getAirplane() {
 		return airplane;
 	}
-	public void setTailNumber(Airplane airplane) {
+	public void setAirplane(Airplane airplane) {
 		this.airplane = airplane;
 	}
 	public Airport getDepartureAirport() {
@@ -73,6 +84,14 @@ public class Flight {
 	public void setLandingAirport(Airport landingAirport) {
 		this.landingAirport = landingAirport;
 	}
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+	
+	
 	
 	
 

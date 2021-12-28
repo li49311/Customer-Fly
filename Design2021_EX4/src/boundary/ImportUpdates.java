@@ -1,11 +1,15 @@
 package boundary;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import control.importControl;
+import entity.Airport;
 import entity.Customer;
 import entity.Flight;
 import entity.FlightTicket;
+import entity.ShowInTheater;
+import entity.TicketBuyers;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -70,7 +74,8 @@ public class ImportUpdates {
 		{
 			Customer selectCustomer = (Customer) CustomerList.getSelectionModel().getSelectedItem();
 		
-			if(importControl.getCustmersCantSeat().contains(selectCustomer)|| selectCustomer.getMyShow().getStatus().equals("cancaled"))
+			//TODO Add a test that checks whether the flight is also in the "canceled" status
+			if(importControl.getCustmersCantSeat().contains(selectCustomer))
 			{//if the flight is canceled 
 				updateMessage="Unfornatnatly we had to cancel your order";			
 			}
@@ -98,5 +103,7 @@ public class ImportUpdates {
 		
 		messageLbl.setText(message);	
 	}
+	
+	
 
 }
