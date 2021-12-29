@@ -7,8 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16" fx:controller="boundary.ImportUpdates">
+<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.ImportUpdates">
    <children>
       <Text fill="#35a5d5" layoutX="244.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Get Data From Manager-Fly System: " underline="true">
          <font>
@@ -26,10 +25,11 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Button fx:id="notifyButton" layoutX="426.0" layoutY="374.0" mnemonicParsing="false" text="Notify">
+      <Button fx:id="notifyButton" layoutX="426.0" layoutY="374.0" mnemonicParsing="false" onAction="#notifyUser" text="Notify">
          <font>
             <Font name="System Bold Italic" size="16.0" />
          </font>
       </Button>
+      <Label fx:id="messageLbl" layoutX="398.0" layoutY="504.0" text="Label" />
    </children>
 </AnchorPane>

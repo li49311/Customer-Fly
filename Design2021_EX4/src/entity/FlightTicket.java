@@ -4,16 +4,18 @@ public class FlightTicket {
 	
 	private int orderNum;
 	private int ticketNum;
-	private int customerPassportNum;
-	private String flightNum;
+	private String seatClass;
+	private Customer customer;
+	private Flight flight;
 	
 	
-	public FlightTicket(int orderNum, int ticketNum, int customerPassportNum, String flightNum) {
+	public FlightTicket(int orderNum, int ticketNum, String seatClass, Customer customer, Flight flight) {
 		super();
 		this.orderNum = orderNum;
 		this.ticketNum = ticketNum;
-		this.customerPassportNum = customerPassportNum;
-		this.flightNum = flightNum;
+		this.seatClass = seatClass;
+		this.customer = customer;
+		this.flight = flight;
 	}
 	
 	public int getOrderNum() {
@@ -32,21 +34,39 @@ public class FlightTicket {
 		this.ticketNum = ticketNum;
 	}
 
-	public int getCustomerPassportNum() {
-		return customerPassportNum;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setCustomerPassportNum(int customerPassportNum) {
-		this.customerPassportNum = customerPassportNum;
+	public void setCustomerPassportNum(Customer customer) {
+		this.customer = customer;
 	}
 
-	public String getFlightNum() {
-		return flightNum;
+	public Flight getFlightNum() {
+		return flight;
 	}
 
-	public void setFlightNum(String flightNum) {
-		this.flightNum = flightNum;
+	public void setFlightNum(Flight flight) {
+		this.flight = flight;
 	}
+	
+	
+
+	public String getSeatClass() {
+		return seatClass;
+	}
+
+	public void setSeatClass(String seatClass) {
+		this.seatClass = seatClass;
+	}
+
+	@Override
+	public String toString() {
+		return "orderNum=" + orderNum + ", ticketNum=" + ticketNum + ", seatClass=" + seatClass
+				+ ", customer=" + customer + ", flight=" + flight + "]";
+	}
+	
+	
 
 	
 	

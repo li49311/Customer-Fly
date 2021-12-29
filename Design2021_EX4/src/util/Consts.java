@@ -19,18 +19,20 @@ public class Consts
 	public static final String SQL_SEL_FLIGHTTICKET_BY_CUSTOMER = "call quer_tickets_by_customer(?)";
 	public static final String SQL_SEL_CUSTOMERS_BY_FLIGHT = "call sql_customers_for_flight(?)";
 	public static final String SQL_SEL_SEATS_BY_PLANE = "call quer_seats_by_plane(?)";
+	public static final String SQL_SEL_SEATS_BY_CLASS = "call quer_seats_by_class(?)";
 	public static final String SQL_SEL_ALL_SHOWS_RECOM = "call quer_recommend_New_Flights(?)";
+	public static final String SQL_SEL_FLIGHT_BY_NUMBER = "call quer_flight_by_number(?)";
 	
 	public static final String SQL_AIRPLANE_EXIST = "call quer_is_airplane_exist(?)";
 	public static final String SQL_AIRPORT_EXIST = "call quer_is_airport_exist(?)";
 	
-	public static final String SQL_INS_FLIGHT = "{ call quer_insert_flight(?,?,?,?,?,?,?) }";
+	public static final String SQL_INS_FLIGHT = "{ call quer_insert_flight(?,?,?,?,?,?,?,?) }";
 	public static final String SQL_INS_AIRPLANE = "{ call quer_insert_airplane(?) }";
 	public static final String SQL_INS_AIRPORT = "{ call quer_insert_airport(?,?,?) }";
 	public static final String SQL_INS_SEAT = "{ call quer_insert_seat(?,?,?,?) }";
 	
 	public static final String SQL_UPDATE_AIRPORT = "{ call quer_update_airport(?,?,?) }";
-	public static final String SQL_UPDATE_FLIGHT = "{ call quer_update_flight(?,?,?,?,?,?,?) }";
+	public static final String SQL_UPDATE_FLIGHT = "{ call quer_update_flight(?,?,?,?,?,?,?,?) }";
 
 	
 	

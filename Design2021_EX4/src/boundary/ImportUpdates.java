@@ -1,22 +1,14 @@
 package boundary;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-
 import control.importControl;
-import entity.Airport;
-import entity.Customer;
-import entity.Flight;
 import entity.FlightTicket;
-import entity.ShowInTheater;
-import entity.TicketBuyers;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.input.MouseEvent;
 
 public class ImportUpdates {
 	
@@ -48,7 +40,7 @@ public class ImportUpdates {
 	@FXML
 	public void importJSON(ActionEvent event)
 	{
-		ArrayList<Customer> customerList = importControl.getAllNeedToCall();
+		ArrayList<FlightTicket> customerList = importControl.getAllNeedToCall();
 		addToList(customerList);
 		
 		
@@ -57,22 +49,22 @@ public class ImportUpdates {
 	
 	//this method is for adding to listView the customers
 	@FXML
-	private void addToList(ArrayList<Customer> custList)
+	private void addToList(ArrayList<FlightTicket> custList)
 	{
 		CustomerList.setItems(FXCollections.observableArrayList(custList));	
 	}
 	
 	//Update the customer on the changes in his order details or on the cancellation of his flight
 	@FXML
-	private void notifyUser(MouseEvent event)
+	private void notifyUser(ActionEvent event)
 	{
 		messageLbl.setText("");
 		String message;
 		String updateMessage;
 		
-		if(CustomerList.getSelectionModel().getSelectedItem()!=null) // select from list
+		if(CustomerList.getSelectionModel().getSelectedItem() != null) // select from list
 		{
-			Customer selectCustomer = (Customer) CustomerList.getSelectionModel().getSelectedItem();
+			FlightTicket selectCustomer = (FlightTicket) CustomerList.getSelectionModel().getSelectedItem();
 		
 			//TODO Add a test that checks whether the flight is also in the "canceled" status
 			if(importControl.getCustmersCantSeat().contains(selectCustomer))
@@ -81,27 +73,28 @@ public class ImportUpdates {
 			}
 			else
 			{
-				updateMessage="Unfornatnatly we had to update your order Details. \nThis is the new details: \n" +selectCustomer.getMyShow();
+				updateMessage="Unfornatnatly we had to update your order Details. \nThis is the new details: \n" +selectCustomer.getFlightNum();
 			}
-			message = "Dear " + selectCustomer.getFirstName() + ",\n"+updateMessage+"\nThis is your show recommendations if you would like to choose a new show: \n";
-			ArrayList<Flight> flights = importControl.recommendUserNewDetails(selectCustomer);
-			
-			for(Flight f :flights)
-			{
-				message+= f+"\n";
-			}
-			
-			if(flights.isEmpty())
-			{
-				message="Dear " + selectCustomer.getFirstName() + ",\n"+updateMessage+"\nUnfortently we don't have recommendations for you :( \n";
-			}
-		}
-		else
-		{
-			message="Please select custumer to call";
-		}
-		
+			message = "Dear " + selectCustomer.getCustomer().getFirstName() + ",\n"+updateMessage+"\nThis is your show recommendations if you would like to choose a new show: \n";
+//			ArrayList<Flight> flights = importControl.recommendUserNewDetails(selectCustomer);
+//			
+//			for(Flight f :flights)
+//			{
+//				message+= f+"\n";
+//			}
+//			
+//			if(flights.isEmpty())
+//			{
+//				message="Dear " + selectCustomer.getFirstName() + ",\n"+updateMessage+"\nUnfortently we don't have recommendations for you :( \n";
+//			}
+//		}
+//		else
+//		{
+//			message="Please select custumer to call";
+//		}
+//		
 		messageLbl.setText(message);	
+	}
 	}
 	
 	

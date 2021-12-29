@@ -42,6 +42,16 @@ public class Flight {
 		this.landingAirport = landingAirport;
 	}
 	
+	
+	
+	public Flight(String flightNum, String airplane, String departureAirport, String landingAirport) {
+		super();
+		this.flightNum = flightNum;
+		this.airplane = new Airplane(airplane);
+		this.departureAirport = new Airport(departureAirport);
+		this.landingAirport = new Airport(landingAirport);
+	}
+
 	public String getFlightNum() {
 		return flightNum;
 	}
@@ -89,6 +99,11 @@ public class Flight {
 	}
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
+	}
+
+	@Override
+	public String toString() {
+		return "flightNum=" + flightNum + ", departureTime=" + departureTime + ", landingTime=" + landingTime;
 	}
 	
 	

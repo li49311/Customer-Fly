@@ -5,6 +5,31 @@ import java.util.HashSet;
 
 public class Airplane {
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((tailNumber == null) ? 0 : tailNumber.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Airplane other = (Airplane) obj;
+		if (tailNumber == null) {
+			if (other.tailNumber != null)
+				return false;
+		} else if (!tailNumber.equals(other.tailNumber))
+			return false;
+		return true;
+	}
+
 	private String tailNumber;
 	private HashSet<Seat> seats = new HashSet<Seat>();
 

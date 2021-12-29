@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -21,15 +22,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import boundary.ShowInTheater;
 import entity.Airplane;
 import entity.Airport;
 import entity.Customer;
 import entity.Flight;
+import entity.FlightTicket;
+import entity.Order;
 import entity.Seat;
-import entity.Show;
-import entity.Theater;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import util.Consts;
@@ -37,7 +36,8 @@ import util.FlightStatus;
 
 public class importControl {
 	
-	public static ArrayList<Customer> custmersCantSeat = new ArrayList<Customer>();
+	public static ArrayList<FlightTicket> custmersCantSeat = new ArrayList<FlightTicket>();
+	
 	private static importControl instance;
 	public static importControl getInstance() 
 	{
@@ -46,9 +46,8 @@ public class importControl {
 		return instance;
 	}
 	
-	public static  ArrayList<Customer> getCustmersCantSeat()
+	public static  ArrayList<FlightTicket> getCustmersCantSeat()
 	{
-		System.out.println(custmersCantSeat);
 		return custmersCantSeat;
 	}
 	
@@ -156,19 +155,14 @@ public class importControl {
 		int dayDate = Integer.parseInt(day);
 		int hourDate = Integer.parseInt(hour);
 		int minutesDate = Integer.parseInt(minutes);
-	//	System.out.println(year);
-		//System.out.println(month);
-	//	System.out.println(day);
 		LocalDateTime date2 = LocalDateTime.of(yearDate, monthDate, dayDate, hourDate, minutesDate);
-	//	System.out.println("date 222 " + date2);
 		Timestamp myTime =Timestamp.valueOf(date2);
-	//	System.out.println(myDate);
 		return myTime;		
 	}
 	
 	
 	//This method will give us all people we need to call them because of updates
-		public static ArrayList<Customer> getAllNeedToCall() {
+		public static ArrayList<FlightTicket> getAllNeedToCall() {
 			ArrayList<Flight> ourJsonResult = importFlights();
 			ArrayList<Flight> toUpdate = new ArrayList<>();
 			ArrayList<Flight> toInsert = new ArrayList<>();
@@ -179,13 +173,26 @@ public class importControl {
 			for(Flight value : ourJsonResult)
 			{
 				String flightNum = value.getFlightNum();
-				//System.out.println(value);
-				
+				//check if the imported flights are exists
 				Boolean isExist = flightIDs.contains(flightNum);
 
 			try {	
-				if(isExist) //update
+				if(isExist) //need to update
 				{
+					//get the same flight from db
+					Flight beforeUpdate = getFlightByNum(flightNum);
+					if(!value.getAirplane().equals(beforeUpdate.getAirplane())) {
+						if(!isExistAirplane(value.getAirplane()))
+							insertAirplane(value.getAirplane());
+					}
+					if(!value.getDepartureAirport().equals(beforeUpdate.getDepartureAirport())) {
+						if(!isExistAirport(value.getDepartureAirport()))
+							insertAirport(value.getDepartureAirport());
+					}
+					if(!value.getLandingAirport().equals(beforeUpdate.getLandingAirport())) {
+						if(!isExistAirport(value.getLandingAirport()))
+							insertAirport(value.getLandingAirport());
+					}					
 					toUpdate.add(value);
 					updateFlight(value);
 					++counterUpdate;
@@ -211,17 +218,51 @@ public class importControl {
 			alert.setTitle("Success");
 			alert.showAndWait();
 			
-			ArrayList <Customer> tb = new ArrayList<Customer>();
-			System.out.println(toUpdate);
+			ArrayList <FlightTicket> tb = new ArrayList<FlightTicket>();
 			for(Flight flight: toUpdate)
 			{
-				System.out.println(getAllTicketByIDS(flight));
 				tb.addAll(getAllTicketByIDS(flight));
 			}
 			
 			return tb;		
 		}
 		
+		private static Flight getFlightByNum(String flightNum) {
+			Flight flight = null;
+			String flightID;
+			String tailNumber;
+			String departure;
+			String destination;
+			
+			try {
+				Class.forName(Consts.JDBC_STR);
+				try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+						CallableStatement callst = conn.prepareCall(Consts.SQL_SEL_FLIGHT_BY_NUMBER))
+						{
+						int k=1;
+						callst.setString(k++, flightNum);
+						
+						ResultSet rs = callst.executeQuery();
+						while (rs.next()) 
+						{
+							int i =1;
+							flightID = (rs.getString(i++));
+							tailNumber = (rs.getString(i++));
+							departure = (rs.getString(i++));
+							destination = (rs.getString(i++));
+							
+							flight = new Flight(flightID, tailNumber, departure, destination);
+						}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+			return flight;	
+		}
+
 		public static HashSet<String> getAllIDFlights()
 		{
 			HashSet<String> flightIDs = new HashSet<String>();
@@ -246,23 +287,129 @@ public class importControl {
 		}
 		
 		
-		private static ArrayList<Customer> isProblemWithUpdateSeats(Flight flight) {
-			int maxCapacity = getMaxCapacity(flight.getAirplane());	
-			ArrayList<Customer> arr = getAllTicketByIDS(flight);
-			ArrayList<Customer> toReturn = new ArrayList<Customer>(); 
-		
-			for(int i = 0; i < arr.size(); i++)
-			{
-				if(i > maxCapacity)
-					toReturn.add(arr.get(i));
+		private static ArrayList<FlightTicket> isProblemWithUpdateSeats(Flight flight) {
+			HashMap<String, Integer> maxCapacity = getSeatsByClass(flight.getAirplane());	
+			ArrayList<FlightTicket> arr = getAllTicketByIDS(flight);
+			ArrayList<FlightTicket> toReturn = new ArrayList<FlightTicket>(); 
+			HashMap<Integer, ArrayList<FlightTicket>> orders = new HashMap<>();
+			HashMap<Integer, ArrayList<FlightTicket>> economyTickets = new HashMap<>();
+			HashMap<Integer, ArrayList<FlightTicket>> buisnessTickets = new HashMap<>();
+			HashMap<Integer, ArrayList<FlightTicket>> firstTickets = new HashMap<>();
+			
+			int economyCount = 0;
+			int buisnessCount = 0;
+			int firstCount = 0;
+			
+			for(FlightTicket ticket: arr) {
+				if(orders.containsKey(ticket.getOrderNum()))
+						orders.get(ticket.getOrderNum()).add(ticket);
+				else {
+					ArrayList<FlightTicket> ticketPerOrder = new ArrayList<>();
+					ticketPerOrder.add(ticket);
+					orders.put(ticket.getOrderNum(), ticketPerOrder);
+				}
+				if(ticket.getSeatClass().equals("economy")) {
+					if(economyTickets.containsKey(ticket.getOrderNum()))
+						economyTickets.get(ticket.getOrderNum()).add(ticket);
+					else {
+						ArrayList<FlightTicket> economy = new ArrayList<>();
+						economy.add(ticket);
+						economyTickets.put(ticket.getOrderNum(), economy);
+					}
+				}
+				
+				if(ticket.getSeatClass().equals("buisness")) {
+					if(buisnessTickets.containsKey(ticket.getOrderNum()))
+						buisnessTickets.get(ticket.getOrderNum()).add(ticket);
+					else {
+						ArrayList<FlightTicket> buisness = new ArrayList<>();
+						buisness.add(ticket);
+						buisnessTickets.put(ticket.getOrderNum(), buisness);
+					}
+				}
+				if(ticket.getSeatClass().equals("first")) {
+					if(firstTickets.containsKey(ticket.getOrderNum()))
+						firstTickets.get(ticket.getOrderNum()).add(ticket);
+					else {
+						ArrayList<FlightTicket> first = new ArrayList<>();
+						first.add(ticket);
+						firstTickets.put(ticket.getOrderNum(), first);
+					}
+				}
+			}
+			
+//			for(Integer orderNum: orders.keySet()) {
+//				if(economyCount + economyTickets.get(orderNum).size() <= maxCapacity.get("economy")) 
+//					economyCount += economyTickets.get(orderNum).size();
+//				if(buisnessCount + buisnessTickets.get(orderNum).size() <= maxCapacity.get("buisness")) 
+//					buisnessCount += buisnessTickets.get(orderNum).size();
+//				if(firstCount + firstTickets.get(orderNum).size() <= maxCapacity.get("first")) 
+//					firstCount += firstTickets.get(orderNum).size();
+//				
+//				if(economyCount > maxCapacity.get("economy") || buisnessCount > maxCapacity.get("buisness") || firstCount > maxCapacity.get("first")) {
+//					toReturn.addAll(orders.get(orderNum));
+//				}
+//			}
+			
+			for(Integer order: orders.keySet()) {
+				String seatClass = orders.get(order).get(0).getSeatClass();
+				if(seatClass.equals("economy") && economyCount + orders.get(order).size() <= maxCapacity.get("economy")) 
+					economyCount+=orders.get(order).size();
+	
+				if(seatClass.equals("buisness") && buisnessCount + orders.get(order).size() <= maxCapacity.get("buisness")) 
+					buisnessCount+=orders.get(order).size();
+
+				if(seatClass.equals("first") && firstCount + orders.get(order).size() <= maxCapacity.get("first")) 
+					firstCount+=orders.get(order).size();
+
+				if(economyCount + orders.get(order).size() > maxCapacity.get("economy"))
+					toReturn.addAll(orders.get(order));
+				
+				if(buisnessCount + orders.get(order).size() > maxCapacity.get("buisness"))
+					toReturn.addAll(orders.get(order));
+				
+				if(firstCount + orders.get(order).size() > maxCapacity.get("first"))
+					toReturn.addAll(orders.get(order));
 			}
 			return toReturn;
 		}
-		
-		private static int getMaxCapacity(Airplane airplane) {
-			return getSeatsByAirplane(airplane).size();	
+
+		private static HashMap<String, Integer> getSeatsByClass(Airplane airplane) {
+			HashMap<String, Integer> seatsInPlane = new HashMap<String, Integer>();
+			int firstCount;
+			int buisnessCount;
+			int economyCount;
+			
+			try {
+				Class.forName(Consts.JDBC_STR);
+				try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+						CallableStatement callst = conn.prepareCall(Consts.SQL_SEL_SEATS_BY_CLASS))
+						{
+						int k=1;
+						callst.setString(k++, airplane.getTailNumber());
+						
+						
+						ResultSet rs = callst.executeQuery();
+						while (rs.next()) 
+						{
+							int i =1;
+							economyCount = (rs.getInt(i++));
+							buisnessCount = (rs.getInt(i++));
+							firstCount = (rs.getInt(i++));
+							seatsInPlane.put("economy", economyCount);
+							seatsInPlane.put("buisness", buisnessCount);
+							seatsInPlane.put("first", firstCount);
+						}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+			return seatsInPlane;	
 		}
-		
+
 		private static ArrayList<Seat> getSeatsByAirplane(Airplane airplane) {
 			ArrayList<Seat> seatsInPlane = new ArrayList<Seat>();
 			int rowNum;
@@ -300,14 +447,17 @@ public class importControl {
 
 
 
-		public static ArrayList<Customer> getAllTicketByIDS(Flight flight)
+		public static ArrayList<FlightTicket> getAllTicketByIDS(Flight flight)
 		{
 			String flightNum = flight.getFlightNum();
-			ArrayList<Customer> buyersList = new ArrayList<Customer>();
+			ArrayList<FlightTicket> buyersList = new ArrayList<FlightTicket>();
 			int passportNum;
 			String fname;
 			String lname;
 			String mail;
+			int orderNum;
+			int ticketNum;
+			String seatClass;
 			
 			try {
 				Class.forName(Consts.JDBC_STR);
@@ -326,9 +476,13 @@ public class importControl {
 							fname = (rs.getString(i++));
 							lname = (rs.getString(i++));
 							mail = (rs.getString(i++));
+							orderNum = (rs.getInt(i++));
+							ticketNum = (rs.getInt(i++));
+							seatClass = (rs.getString(i++));
 							
 							Customer cust = new Customer(passportNum, fname, lname, mail);
-							buyersList.add(cust);
+							FlightTicket ticket = new FlightTicket(orderNum, ticketNum, seatClass, cust, flight);
+							buyersList.add(ticket);
 						}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -356,7 +510,9 @@ public class importControl {
 				stmt.setString(i++, flight.getAirplane().getTailNumber());
 				stmt.setString(i++, flight.getDepartureAirport().getAirportCode());
 				stmt.setString(i++, flight.getLandingAirport().getAirportCode());
+				stmt.setDate(i++, Date.valueOf(LocalDate.now()));
 				stmt.setString(i++, flight.getFlightNum());
+				
 				stmt.executeUpdate();
 			}
 			return true;
@@ -408,6 +564,7 @@ public class importControl {
 				stmt.setString(i++, flight.getAirplane().getTailNumber());
 				stmt.setString(i++, flight.getDepartureAirport().getAirportCode());
 				stmt.setString(i++, flight.getLandingAirport().getAirportCode());
+				stmt.setDate(i++, Date.valueOf(LocalDate.now()));
 				
 				stmt.executeUpdate();
 			}
