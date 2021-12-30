@@ -2,17 +2,16 @@
 <!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OrdersReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28d7ad76-e479-4762-ad39-377f3c369d16">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="UCA"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="562"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="425"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="src\control\BigFlightRepo.xml"/>
 	<queryString language="SQL">
-		<![CDATA[SELECT tbl_Customer.PassportNumber, tbl_Customer.FirstName, tbl_Customer.LastName, Sum(IIf((TimeValue(tbl_Flight.DepartureTime)<="11:00" And TimeValue([tbl_Flight].[DepartureTime])>="05:00"),1,0)) AS morning, Sum(IIf((TimeValue(tbl_Flight.DepartureTime)<="17:00" And TimeValue(tbl_Flight.DepartureTime)>="11:00"),1,0)) AS noon, Sum(IIf((TimeValue(tbl_Flight.DepartureTime)<="23:00" And TimeValue(tbl_Flight.DepartureTime)>="17:00"),1,0)) AS evening, Sum(IIf((TimeValue(tbl_Flight.DepartureTime)<="05:00" And TimeValue(tbl_Flight.DepartureTime)>="23:00"),1,0)) AS night
-FROM tbl_Flight AS tbl_Flight_1 INNER JOIN (((tbl_Flight INNER JOIN tbl_FlightTicket AS tbl_FlightTicket_1 ON tbl_Flight.FlightNum = tbl_FlightTicket_1.FlightNum) INNER JOIN tbl_Customer ON tbl_FlightTicket_1.CustomerPassportNumber = tbl_Customer.PassportNumber) INNER JOIN tbl_FlightTicket ON tbl_Customer.PassportNumber = tbl_FlightTicket.CustomerPassportNumber) ON tbl_Flight_1.FlightNum = tbl_FlightTicket.FlightNum
+		<![CDATA[SELECT tbl_Customer.PassportNumber, tbl_Customer.FirstName, tbl_Customer.LastName, Sum(IIf((Hour(tbl_Flight.DepartureTime) BETWEEN 5 AND 10),1,0)) AS morning, Sum(IIf((Hour(tbl_Flight.DepartureTime) BETWEEN 11 AND 16),1,0)) AS noon, Sum(IIf((Hour(tbl_Flight.DepartureTime) BETWEEN 17 AND 22),1,0)) AS evening, Sum(IIf((Hour(tbl_Flight.DepartureTime) BETWEEN 0 AND 4),1,0)) AS night
+FROM (tbl_Flight AS tbl_Flight_1 INNER JOIN (tbl_Customer INNER JOIN tbl_FlightTicket ON tbl_Customer.PassportNumber = tbl_FlightTicket.CustomerPassportNumber) ON tbl_Flight_1.FlightNum = tbl_FlightTicket.FlightNum) INNER JOIN (tbl_Flight INNER JOIN tbl_FlightTicket AS tbl_FlightTicket_1 ON tbl_Flight.FlightNum = tbl_FlightTicket_1.FlightNum) ON tbl_Customer.PassportNumber = tbl_FlightTicket_1.CustomerPassportNumber
 GROUP BY tbl_Customer.PassportNumber, tbl_Customer.FirstName, tbl_Customer.LastName, tbl_Flight_1.updateDate
-HAVING (((tbl_Flight_1.updateDate)=Date()));
-]]>
+HAVING (((tbl_Flight_1.updateDate)=Date()));]]>
 	</queryString>
-	<field name="PassportNumber" class="java.lang.Long"/>
+	<field name="PassportNumber" class="java.lang.Integer"/>
 	<field name="FirstName" class="java.lang.String"/>
 	<field name="LastName" class="java.lang.String"/>
 	<field name="morning" class="java.lang.Integer"/>
@@ -37,9 +36,6 @@ HAVING (((tbl_Flight_1.updateDate)=Date()));
 			</textField>
 		</band>
 	</title>
-	<pageHeader>
-		<band height="35" splitType="Stretch"/>
-	</pageHeader>
 	<columnHeader>
 		<band height="61" splitType="Stretch">
 			<staticText>
@@ -87,7 +83,7 @@ HAVING (((tbl_Flight_1.updateDate)=Date()));
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="125" splitType="Stretch">
+		<band height="41" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="81" height="30" uuid="a5b167b7-3dc2-40ee-9217-098c30ad39ea">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="015bf391-291d-4ed6-a9db-aa2fe2a1e03f"/>
@@ -132,9 +128,6 @@ HAVING (((tbl_Flight_1.updateDate)=Date()));
 			</textField>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
 	<pageFooter>
 		<band height="54" splitType="Stretch">
 			<textField>
@@ -146,7 +139,4 @@ HAVING (((tbl_Flight_1.updateDate)=Date()));
 			</textField>
 		</band>
 	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>

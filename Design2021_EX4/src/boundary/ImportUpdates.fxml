@@ -31,5 +31,6 @@
          </font>
       </Button>
       <Label fx:id="messageLbl" layoutX="398.0" layoutY="504.0" text="Label" />
+      <Button layoutX="180.0" layoutY="419.0" mnemonicParsing="false" onAction="#Report" text="Report" />
    </children>
 </AnchorPane>

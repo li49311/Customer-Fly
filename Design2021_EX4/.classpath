@@ -22,5 +22,10 @@
 	<classpathentry kind="lib" path="lib/java-json.jar"/>
 	<classpathentry kind="lib" path="lib/json-simple-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/json-simple-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/jfoenix-8.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/jfoenix-8.0.8.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.karaf.specs.java.xml-4.2.12.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.karaf.specs.locator-4.2.12.jar"/>
+	<classpathentry kind="lib" path="lib/xml-apis-1.4.01.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

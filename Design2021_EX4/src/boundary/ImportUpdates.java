@@ -1,6 +1,10 @@
 package boundary;
 
 import java.util.ArrayList;
+
+import javax.swing.JFrame;
+
+import control.ControlReport;
 import control.importControl;
 import entity.FlightTicket;
 import javafx.collections.FXCollections;
@@ -95,6 +99,12 @@ public class ImportUpdates {
 //		
 		messageLbl.setText(message);	
 	}
+	}
+	
+	@FXML
+	void Report(ActionEvent event) {
+		JFrame reportFrame = ControlReport.getInstance().produceReport();
+		reportFrame.setVisible(true);
 	}
 	
 	
