@@ -7,6 +7,7 @@ public class Order {
 	int OrderNum;
 	Date OrderDate;
 	util.PamentMethod PamentMethod;
+	private boolean isCanceled;
 	
 	
 	public Order(int orderNum, Date orderDate, util.PamentMethod pamentMethod) {
@@ -14,6 +15,7 @@ public class Order {
 		OrderNum = orderNum;
 		OrderDate = orderDate;
 		PamentMethod = pamentMethod;
+		this.setCanceled(false);
 	}
 	
 	public int getOrderNum() {
@@ -33,6 +35,15 @@ public class Order {
 	}
 	public void setPamentMethod(util.PamentMethod pamentMethod) {
 		PamentMethod = pamentMethod;
+	}
+	
+
+	public boolean isCanceled() {
+		return isCanceled;
+	}
+
+	public void setCanceled(boolean isCanceled) {
+		this.isCanceled = isCanceled;
 	}
 
 	@Override

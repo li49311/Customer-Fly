@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OrdersReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="28d7ad76-e479-4762-ad39-377f3c369d16">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="UCA"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="562"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="425"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT tbl_Customer.PassportNumber, tbl_Customer.FirstName, tbl_Customer.LastName, Sum(IIf((TimeValue(tbl_Flight.DepartureTime)<="11:00" And TimeValue([tbl_Flight].[DepartureTime])>="05:00"),1,0)) AS morning, Sum(IIf((TimeValue(tbl_Flight.DepartureTime)<="17:00" And TimeValue(tbl_Flight.DepartureTime)>="11:00"),1,0)) AS noon, Sum(IIf((TimeValue(tbl_Flight.DepartureTime)<="23:00" And TimeValue(tbl_Flight.DepartureTime)>="17:00"),1,0)) AS evening, Sum(IIf((TimeValue(tbl_Flight.DepartureTime)<="05:00" And TimeValue(tbl_Flight.DepartureTime)>="23:00"),1,0)) AS night
+FROM tbl_Flight AS tbl_Flight_1 INNER JOIN (((tbl_Flight INNER JOIN tbl_FlightTicket AS tbl_FlightTicket_1 ON tbl_Flight.FlightNum = tbl_FlightTicket_1.FlightNum) INNER JOIN tbl_Customer ON tbl_FlightTicket_1.CustomerPassportNumber = tbl_Customer.PassportNumber) INNER JOIN tbl_FlightTicket ON tbl_Customer.PassportNumber = tbl_FlightTicket.CustomerPassportNumber) ON tbl_Flight_1.FlightNum = tbl_FlightTicket.FlightNum
+GROUP BY tbl_Customer.PassportNumber, tbl_Customer.FirstName, tbl_Customer.LastName, tbl_Flight_1.updateDate
+HAVING (((tbl_Flight_1.updateDate)=Date()));
+]]>
+	</queryString>
+	<field name="PassportNumber" class="java.lang.Long"/>
+	<field name="FirstName" class="java.lang.String"/>
+	<field name="LastName" class="java.lang.String"/>
+	<field name="morning" class="java.lang.Integer"/>
+	<field name="noon" class="java.lang.Integer"/>
+	<field name="evening" class="java.lang.Integer"/>
+	<field name="night" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="90" y="19" width="380" height="40" uuid="c8f50a7a-05dc-4493-9e64-a2c5c548b693"/>
+				<textElement textAlignment="Center">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Orders Information Report]]></text>
+			</staticText>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="0" width="100" height="30" uuid="189ddc88-904b-44b1-b701-936e77722735"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="81" height="30" uuid="50d66806-481e-43ab-b436-e6951c42a7ac">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="015bf391-291d-4ed6-a9db-aa2fe2a1e03f"/>
+				</reportElement>
+				<text><![CDATA[PassportNumber]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="81" y="0" width="79" height="30" uuid="3b1597ea-80d8-4a8b-94a2-b594d6df5d1d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="38c7c9e9-ce33-4c30-b938-f21fe01ec074"/>
+				</reportElement>
+				<text><![CDATA[FirstName]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="0" width="79" height="30" uuid="9a77ea62-0bd5-4867-8eb5-9571c39635ce">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9c44028a-3928-47fc-a632-c1e5ddb17a36"/>
+				</reportElement>
+				<text><![CDATA[LastName]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="239" y="0" width="79" height="30" uuid="d40dd846-49cd-4bda-9d44-17cde04637da">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="77cd6e45-5c25-4780-aa33-37efb75b545e"/>
+				</reportElement>
+				<text><![CDATA[morning]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="318" y="0" width="79" height="30" uuid="071f0cb2-b91f-4904-af28-0fbfce9fed86">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a49c743f-e4fe-4af9-8886-fb3a249f1a37"/>
+				</reportElement>
+				<text><![CDATA[noon]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="397" y="0" width="79" height="30" uuid="1f06cccb-6950-42d4-95a3-f0663c15c3d5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ba690d36-dea5-42f0-afe3-29bbf3407ed4"/>
+				</reportElement>
+				<text><![CDATA[evening]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="476" y="0" width="79" height="30" uuid="1b4afbbb-9ab9-4bce-a405-80c7a0335bde">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3b67e0a1-dd7f-4e0f-b5b5-dd476e52bfbb"/>
+				</reportElement>
+				<text><![CDATA[night]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="81" height="30" uuid="a5b167b7-3dc2-40ee-9217-098c30ad39ea">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="015bf391-291d-4ed6-a9db-aa2fe2a1e03f"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{PassportNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="81" y="0" width="79" height="30" uuid="52488f8d-2a16-4f2a-be4d-bc6c6252d752">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="38c7c9e9-ce33-4c30-b938-f21fe01ec074"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{FirstName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="160" y="0" width="79" height="30" uuid="38a0066d-414b-4c03-9dbb-0994a8505922">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9c44028a-3928-47fc-a632-c1e5ddb17a36"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{LastName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="239" y="0" width="79" height="30" uuid="3a409792-b60c-4262-be94-933998cea5d5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="77cd6e45-5c25-4780-aa33-37efb75b545e"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{morning}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="318" y="0" width="79" height="30" uuid="360c0b34-6fd2-4b3b-be32-1ae4d6a061c3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a49c743f-e4fe-4af9-8886-fb3a249f1a37"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{noon}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="0" width="79" height="30" uuid="fb9d2909-9db2-4dee-b586-5a7e92ed7a4a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ba690d36-dea5-42f0-afe3-29bbf3407ed4"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{evening}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="476" y="0" width="79" height="30" uuid="bc784900-6d4d-47fc-8e43-18c6857b4806">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3b67e0a1-dd7f-4e0f-b5b5-dd476e52bfbb"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{night}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<textField>
+				<reportElement x="230" y="12" width="100" height="30" uuid="f343ba4c-89db-4bd7-b91b-d14680c7dda0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

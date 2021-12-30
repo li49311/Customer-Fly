@@ -14,6 +14,9 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 
 import entity.*;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.swing.JRViewer;
 import util.Consts;
 
 
@@ -28,20 +31,16 @@ public class ControlReport
 	}
 	
 
-	/*public JFrame produceReport(Customer customer) 
+	public JFrame produceReport() 
 	{
-		Show s = events.getShow();
-		Theater t = events.getTheater();
 		try {
 			Class.forName(Consts.JDBC_STR);
 			try (Connection conn = DriverManager.getConnection(Consts.CONN_STR))
 			{
 				HashMap<String, Object> params = new HashMap<>();
 
-				params.put("tId", t.getTheaterID());
-				params.put("sId", s.getId());
 				JasperPrint print = JasperFillManager.fillReport(
-						getClass().getResourceAsStream("/boundary/FoodReport.jasper"),
+						getClass().getResourceAsStream("/boundary/OrdersReport.jasper"),
 						params, conn);
 				JFrame frame = new JFrame("Show Report for " + LocalDate.now());
 				frame.getContentPane().add(new JRViewer(print));
@@ -59,5 +58,5 @@ public class ControlReport
 		}
 		return null;
 
-	}*/
+	}
 }

@@ -681,7 +681,7 @@ public class importControl {
 		
 		
 	//This method will notify the user on the new details of the show
-	public static ArrayList<Flight> recommendUserNewDetails(Customer customer)
+	/*public static ArrayList<Flight> recommendUserNewDetails(Customer customer)
 	{
 		ArrayList<Flight> chacngedFlights = importFlights();
 		
@@ -743,7 +743,7 @@ public class importControl {
 		java.sql.Date updateDate;
 		*/
 				
-		try {
+		/*try {
 			Class.forName(Consts.JDBC_STR);
 			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
 					CallableStatement callst = conn.prepareCall(Consts.SQL_SEL_ALL_SHOWS_RECOM))
@@ -791,7 +791,7 @@ public class importControl {
 		}
 		return showList;
 	}
-	
+*/
 	//this method will get ShowInTheater and amount of tickets and return if someone can sit there
 	public static boolean canBeThere(Flight flight, int amount)
 	{
@@ -799,8 +799,8 @@ public class importControl {
 		int maxCapacityInAirplane = flight.getAirplane().getSeats().size();
 		
 		ArrayList<Seat> seats = getSeatsByAirplane(flight.getAirplane());
-		//TODO find how much available seat exists in this airplane
-		int availableSeats;
+		
+		int availableSeats = 0; //TODO find how much available seat exists in this airplane
 		
 		if (amount - availableSeats < maxCapacityInAirplane)	 {
 			return true;
