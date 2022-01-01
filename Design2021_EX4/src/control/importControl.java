@@ -25,7 +25,6 @@ import entity.Airport;
 import entity.Customer;
 import entity.Flight;
 import entity.FlightTicket;
-import entity.Order;
 import entity.Seat;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -160,7 +159,7 @@ public class importControl {
 	
 	
 	//This method will give us all people we need to call them because of updates
-		public static ArrayList<FlightTicket> getAllNeedToCall() {
+		public static HashMap<Flight, ArrayList<FlightTicket>> getAllNeedToCall() {
 			ArrayList<Flight> ourJsonResult = importFlights();
 			ArrayList<Flight> toUpdate = new ArrayList<>();
 			ArrayList<Flight> toInsert = new ArrayList<>();
@@ -216,10 +215,11 @@ public class importControl {
 			alert.setTitle("Success");
 			alert.showAndWait();
 			
-			ArrayList <FlightTicket> tb = new ArrayList<FlightTicket>();
+			HashMap<Flight, ArrayList<FlightTicket>> tb = new HashMap<>();
 			for(Flight flight: toUpdate)
 			{
-				tb.addAll(getAllTicketByIDS(flight));
+				ArrayList<FlightTicket> allTicketPerFlight = getAllTicketByIDS(flight);
+				tb.put(flight, allTicketPerFlight);
 			}
 			
 			return tb;		
@@ -285,10 +285,10 @@ public class importControl {
 		}
 		
 		
-		private static ArrayList<FlightTicket> isProblemWithUpdateSeats(Flight flight) {
+		private static HashSet<FlightTicket> isProblemWithUpdateSeats(Flight flight) {
 			HashMap<String, Integer> maxCapacity = getSeatsByClass(flight.getAirplane());	
 			ArrayList<FlightTicket> arr = getAllTicketByIDS(flight);
-			ArrayList<FlightTicket> toReturn = new ArrayList<FlightTicket>(); 
+			HashSet<FlightTicket> toReturn = new HashSet<FlightTicket>(); 
 			HashMap<Integer, ArrayList<FlightTicket>> orders = new HashMap<>();
 			HashMap<Integer, ArrayList<FlightTicket>> economyTickets = new HashMap<>();
 			HashMap<Integer, ArrayList<FlightTicket>> buisnessTickets = new HashMap<>();

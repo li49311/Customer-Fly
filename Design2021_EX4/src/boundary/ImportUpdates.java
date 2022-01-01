@@ -1,11 +1,13 @@
 package boundary;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 
 import control.ControlReport;
 import control.importControl;
+import entity.Flight;
 import entity.FlightTicket;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -18,6 +20,9 @@ public class ImportUpdates {
 	
 	@FXML
 	ListView CustomerList;
+	
+	@FXML
+	ListView ticketsList;
 	
 	@FXML
 	Button importJson;
@@ -44,8 +49,12 @@ public class ImportUpdates {
 	@FXML
 	public void importJSON(ActionEvent event)
 	{
-		ArrayList<FlightTicket> customerList = importControl.getAllNeedToCall();
-		addToList(customerList);
+		HashMap<Flight, ArrayList<FlightTicket>> flightsAndTickets = importControl.getAllNeedToCall();
+		addToList(flightsAndTickets);
+		
+		System.out.println(importControl.getCustmersCantSeat());
+		
+		CustomerList.setItems(FXCollections.observableArrayList(importControl.getCustmersCantSeat()));	
 		
 		
 		notifyButton.setDisable(false);
@@ -53,9 +62,13 @@ public class ImportUpdates {
 	
 	//this method is for adding to listView the customers
 	@FXML
-	private void addToList(ArrayList<FlightTicket> custList)
+	private void addToList(HashMap<Flight, ArrayList<FlightTicket>> flightsAndTickets)
 	{
-		CustomerList.setItems(FXCollections.observableArrayList(custList));	
+		ArrayList<Flight> problematicFlights = new ArrayList<>();
+		for(Flight flight: flightsAndTickets.keySet()) 
+			problematicFlights.add(flight);
+			
+		ticketsList.setItems(FXCollections.observableArrayList(problematicFlights));	
 	}
 	
 	//Update the customer on the changes in his order details or on the cancellation of his flight

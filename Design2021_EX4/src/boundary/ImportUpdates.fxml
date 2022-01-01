@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.ImportUpdates">
+<AnchorPane prefHeight="900.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.ImportUpdates">
    <children>
       <Text fill="#35a5d5" layoutX="244.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Get Data From Manager-Fly System: " underline="true">
          <font>
@@ -19,18 +19,24 @@
             <Font name="System Bold Italic" size="18.0" />
          </font>
       </Button>
-      <ListView fx:id="CustomerList" layoutX="244.0" layoutY="193.0" prefHeight="170.0" prefWidth="411.0" />
-      <Label fx:id="label" layoutX="232.0" layoutY="156.0" text="List of changes - Please select a customer and press notify">
+      <ListView fx:id="CustomerList" layoutX="233.0" layoutY="415.0" prefHeight="170.0" prefWidth="411.0" />
+      <Label fx:id="label" layoutX="221.0" layoutY="379.0" text="List of changes - Please select a customer and press notify">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Button fx:id="notifyButton" layoutX="426.0" layoutY="374.0" mnemonicParsing="false" onAction="#notifyUser" text="Notify">
+      <Button fx:id="notifyButton" layoutX="404.0" layoutY="597.0" mnemonicParsing="false" onAction="#notifyUser" text="Notify">
          <font>
             <Font name="System Bold Italic" size="16.0" />
          </font>
       </Button>
-      <Label fx:id="messageLbl" layoutX="398.0" layoutY="504.0" text="Label" />
-      <Button layoutX="180.0" layoutY="419.0" mnemonicParsing="false" onAction="#Report" text="Report" />
+      <Label fx:id="messageLbl" layoutX="70.0" layoutY="670.0" text="Label" />
+      <Button layoutX="44.0" layoutY="607.0" mnemonicParsing="false" onAction="#Report" text="Report" />
+      <ListView fx:id="ticketsList" layoutX="245.0" layoutY="195.0" prefHeight="170.0" prefWidth="411.0" />
+      <Label fx:id="label1" layoutX="233.0" layoutY="151.0" text="List of changes flights:">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
