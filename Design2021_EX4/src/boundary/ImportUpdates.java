@@ -1,20 +1,29 @@
 package boundary;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JFrame;
-
 import control.ControlReport;
 import control.importControl;
+import entity.Airport;
 import entity.Flight;
 import entity.FlightTicket;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
+import util.FlightStatus;
 
 public class ImportUpdates {
 	
@@ -39,10 +48,35 @@ public class ImportUpdates {
 	@FXML
 	Label label;
 	
+	
+	@FXML
+	private TableView<Flight> allFlightsTable;
+	@FXML
+	private TableColumn<Flight, String> flightIDCol;
+	@FXML
+	private TableColumn<Flight, LocalDateTime> departureCol;
+	@FXML
+	private TableColumn<Flight, LocalDateTime> landingCol;
+	@FXML
+	private TableColumn<Flight, String> fromCol;
+	@FXML
+	private TableColumn<Flight, String> toCol;
+	@FXML
+	private TableColumn<Flight, FlightStatus> statusCol;
+	@FXML
+	private TableColumn<Flight, String> airplaneIDCol;
+
+	List<Flight> allFlights = new ArrayList<Flight>();
+	
+	
+	
+	
 	@FXML
 	public void initialize() {
 
 		notifyButton.setDisable(true);
+		
+	  	
 	}
 
 
@@ -68,7 +102,28 @@ public class ImportUpdates {
 		for(Flight flight: flightsAndTickets.keySet()) 
 			problematicFlights.add(flight);
 			
-		ticketsList.setItems(FXCollections.observableArrayList(problematicFlights));	
+		//fill table
+		
+		allFlightsTable.getItems().addAll(problematicFlights);
+		
+		flightIDCol.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<String>(flight.getValue().getFlightNum()));
+		departureCol.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<LocalDateTime>(flight.getValue().getDepartureTime().toLocalDateTime()));
+		landingCol.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<LocalDateTime>(flight.getValue().getLandingTime().toLocalDateTime()));	
+		fromCol.setCellValueFactory(flight -> {
+			Airport origin = importControl.getInstance().getAirportByID(flight.getValue().getDepartureAirport().getAirportCode());
+			String originAirport = origin.getCity() + ", " + origin.getCountry();
+			return new ReadOnlyStringWrapper(originAirport);
+		});
+		
+		toCol.setCellValueFactory(flight -> {
+			Airport destination = importControl.getInstance().getAirportByID(flight.getValue().getLandingAirport().getAirportCode());
+			String destinationAirport = destination.getCity() + ", " + destination.getCountry();
+			return new ReadOnlyStringWrapper(destinationAirport);
+		});
+		
+		statusCol.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<FlightStatus>(flight.getValue().getStatus()));
+		
+		airplaneIDCol.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<String>(flight.getValue().getAirplane().getTailNumber()));	
 	}
 	
 	//Update the customer on the changes in his order details or on the cancellation of his flight
@@ -90,29 +145,36 @@ public class ImportUpdates {
 			}
 			else
 			{
-				updateMessage="Unfornatnatly we had to update your order Details. \nThis is the new details: \n" +selectCustomer.getFlightNum();
+				updateMessage="Unfornatnatly we had to update your order Details. \nThis is the new details: \n" +selectCustomer.getFlight().getFlightNum();
 			}
-			message = "Dear " + selectCustomer.getCustomer().getFirstName() + ",\n"+updateMessage+"\nThis is your show recommendations if you would like to choose a new show: \n";
-//			ArrayList<Flight> flights = importControl.recommendUserNewDetails(selectCustomer);
-//			
-//			for(Flight f :flights)
-//			{
-//				message+= f+"\n";
-//			}
-//			
-//			if(flights.isEmpty())
-//			{
-//				message="Dear " + selectCustomer.getFirstName() + ",\n"+updateMessage+"\nUnfortently we don't have recommendations for you :( \n";
-//			}
-//		}
-//		else
-//		{
-//			message="Please select custumer to call";
-//		}
-//		
+		
+			message = "Dear " + selectCustomer.getCustomer().getFirstName() + ",\n"+updateMessage+"\nThis is your flight recommendations if you would like to choose a new flight: \n";
+			
+			ArrayList<Flight> flights = importControl.recommendUserNewDetails(selectCustomer);
+			System.out.println(message);
+		
+			for(Flight f :flights)
+			{
+				message+= f+"\n";
+			}
+			
+			if(flights.isEmpty())
+			{
+				message="Dear " + selectCustomer.getCustomer().getFirstName() + ",\n"+updateMessage+"\nUnfortently we don't have recommendations for you :( \n";
+			}
+		}
+		else
+		{
+			message="Please select custumer to call";
+		}
+			
+		Alert alert = new Alert(AlertType.INFORMATION, "" + message);
+		alert.setHeaderText("Alternative flight recommendations");
+		alert.setTitle("Alternative flight recommendations");
+		alert.showAndWait();
 		messageLbl.setText(message);	
 	}
-	}
+	
 	
 	@FXML
 	void Report(ActionEvent event) {

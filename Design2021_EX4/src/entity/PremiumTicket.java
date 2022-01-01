@@ -1,5 +1,7 @@
 package entity;
 
+import util.SeatClass;
+
 public class PremiumTicket extends FlightTicket {
 	
 	double luggageWeight;
@@ -9,7 +11,7 @@ public class PremiumTicket extends FlightTicket {
 
 
 	
-	public PremiumTicket(int orderNum, int ticketNum, String seatClass, Customer customer, Flight flight,
+	public PremiumTicket(int orderNum, int ticketNum, SeatClass seatClass, Customer customer, Flight flight,
 			double luggageWeight, String request1, String request2, String request3) {
 		
 		super(orderNum, ticketNum, seatClass, customer, flight);

@@ -1,15 +1,18 @@
 package entity;
 
+import util.SeatClass;
+
 public class FlightTicket {
 	
 	private int orderNum;
 	private int ticketNum;
-	private String seatClass;
+	private SeatClass seatClass;
 	private Customer customer;
 	private Flight flight;
 	
 	
-	public FlightTicket(int orderNum, int ticketNum, String seatClass, Customer customer, Flight flight) {
+	
+	public FlightTicket(int orderNum, int ticketNum, SeatClass seatClass, Customer customer, Flight flight) {
 		super();
 		this.orderNum = orderNum;
 		this.ticketNum = ticketNum;
@@ -18,53 +21,47 @@ public class FlightTicket {
 		this.flight = flight;
 	}
 	
+	
+	@Override
+	public String toString() {
+		return "FlightTicket [orderNum=" + orderNum + ", ticketNum=" + ticketNum + ", seatClass=" + seatClass
+				+ ", customer=" + customer + ", flight=" + flight + "]";
+	}
+
+
 	public int getOrderNum() {
 		return orderNum;
 	}
-
 	public void setOrderNum(int orderNum) {
 		this.orderNum = orderNum;
 	}
-
 	public int getTicketNum() {
 		return ticketNum;
 	}
-
 	public void setTicketNum(int ticketNum) {
 		this.ticketNum = ticketNum;
 	}
-
+	public SeatClass getSeatClass() {
+		return seatClass;
+	}
+	public void setSeatClass(SeatClass seatClass) {
+		this.seatClass = seatClass;
+	}
 	public Customer getCustomer() {
 		return customer;
 	}
-
-	public void setCustomerPassportNum(Customer customer) {
+	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
-
-	public Flight getFlightNum() {
+	public Flight getFlight() {
 		return flight;
 	}
-
-	public void setFlightNum(Flight flight) {
+	public void setFlight(Flight flight) {
 		this.flight = flight;
 	}
 	
+
 	
-
-	public String getSeatClass() {
-		return seatClass;
-	}
-
-	public void setSeatClass(String seatClass) {
-		this.seatClass = seatClass;
-	}
-
-	@Override
-	public String toString() {
-		return "orderNum=" + orderNum + ", ticketNum=" + ticketNum + ", seatClass=" + seatClass
-				+ ", customer=" + customer + ", flight=" + flight + "]";
-	}
 	
 	
 

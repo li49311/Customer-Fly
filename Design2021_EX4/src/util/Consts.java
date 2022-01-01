@@ -22,6 +22,8 @@ public class Consts
 	public static final String SQL_SEL_SEATS_BY_CLASS = "call quer_seats_by_class(?)";
 	public static final String SQL_SEL_ALL_SHOWS_RECOM = "call quer_recommend_New_Flights(?)";
 	public static final String SQL_SEL_FLIGHT_BY_NUMBER = "call quer_flight_by_number(?)";
+	public static final String SQL_SEL_AIRPORTS = "SELECT tbl_Airport.* FROM tbl_Airport";
+	public static final String SQL_SEL_AIRPLANE = "SELECT tbl_Airplane.* FROM tbl_Airplane";
 	
 	public static final String SQL_AIRPLANE_EXIST = "call quer_is_airplane_exist(?)";
 	public static final String SQL_AIRPORT_EXIST = "call quer_is_airport_exist(?)";
@@ -34,8 +36,9 @@ public class Consts
 	public static final String SQL_UPDATE_AIRPORT = "{ call quer_update_airport(?,?,?) }";
 	public static final String SQL_UPDATE_FLIGHT = "{ call quer_update_flight(?,?,?,?,?,?,?,?) }";
 
-	
-	
+	public static final String TICKETS_IN_ORDER = "{ call quer_amount_of_tickets_in_order(?) }";
+	public static final String SEAT_IS_AVAILABLE = "{ call quer_seat_is_avialable(?,?) }";
+	public static final String FLIGHT_RECOMMENDATION = "{ call quer_recommendation(?,?,?,?,?,?) }";
 	
 /*---------------------------------------------------------------------------------------*/
 	/**

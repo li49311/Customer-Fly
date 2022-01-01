@@ -93,7 +93,7 @@ HAVING (((tbl_Flight_1.updateDate)=Date()));]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="44" splitType="Stretch">
+		<band height="37" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="81" height="30" uuid="a5b167b7-3dc2-40ee-9217-098c30ad39ea">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="015bf391-291d-4ed6-a9db-aa2fe2a1e03f"/>

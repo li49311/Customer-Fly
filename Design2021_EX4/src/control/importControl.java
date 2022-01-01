@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import util.Consts;
 import util.FlightStatus;
+import util.SeatClass;
 
 public class importControl {
 	
@@ -260,6 +262,74 @@ public class importControl {
 			
 			return flight;	
 		}
+		
+		public static Airport getAirportByID(String id) {
+			ArrayList<Airport> airports = new ArrayList<Airport>();
+			airports.addAll(getairports());
+			for(Airport ap : airports)
+			{
+				if(ap.getAirportCode().equals(id))
+				{
+					return ap;
+				}
+			}
+			return null;
+		}
+		
+		public static Airplane getAirplaneByID(String id) {
+			ArrayList<Airplane> airplanes = new ArrayList<Airplane>();
+			airplanes.addAll(getairplanes());
+			for(Airplane ap : airplanes)
+			{
+				if(ap.getTailNumber().equals(id))
+				{
+					return ap;
+				}
+			}
+			return null;
+		}
+		
+		public static ArrayList<Airplane> getairplanes() {
+			ArrayList<Airplane> airplaneList = new ArrayList<Airplane>();
+
+			try {
+				Class.forName(Consts.JDBC_STR);
+				try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+						PreparedStatement stmt = conn.prepareStatement(util.Consts.SQL_SEL_AIRPLANE);
+						ResultSet rs = stmt.executeQuery()) {
+					while (rs.next()) {
+						int i = 1;
+						airplaneList.add(new Airplane(rs.getString(i++)));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			return airplaneList;
+		}
+
+		public static ArrayList<Airport> getairports() {
+			ArrayList<Airport> airportList = new ArrayList<Airport>();
+
+			try {
+				Class.forName(Consts.JDBC_STR);
+				try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+						PreparedStatement stmt = conn.prepareStatement(util.Consts.SQL_SEL_AIRPORTS);
+						ResultSet rs = stmt.executeQuery()) {
+					while (rs.next()) {
+						int i = 1;
+						airportList.add(new Airport(rs.getString(i++),rs.getString(i++), rs.getString(i++)));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			return airportList;	
+		}
 
 		public static HashSet<String> getAllIDFlights()
 		{
@@ -350,7 +420,7 @@ public class importControl {
 //			}
 			
 			for(Integer order: orders.keySet()) {
-				String seatClass = orders.get(order).get(0).getSeatClass();
+				SeatClass seatClass = orders.get(order).get(0).getSeatClass();
 				if(seatClass.equals("economy") && economyCount + orders.get(order).size() <= maxCapacity.get("economy")) 
 					economyCount+=orders.get(order).size();
 	
@@ -479,7 +549,18 @@ public class importControl {
 							seatClass = (rs.getString(i++));
 							
 							Customer cust = new Customer(passportNum, fname, lname, mail);
-							FlightTicket ticket = new FlightTicket(orderNum, ticketNum, seatClass, cust, flight);
+							FlightTicket ticket;
+							
+							if (SeatClass.business.equals(seatClass)){
+								ticket = new FlightTicket(orderNum, ticketNum, SeatClass.business, cust, flight);
+							}
+							else if (SeatClass.economy.equals(seatClass)){
+								ticket = new FlightTicket(orderNum, ticketNum, SeatClass.economy, cust, flight);
+							}
+							else { //SeatClass = firstClass
+								ticket = new FlightTicket(orderNum, ticketNum, SeatClass.firstClass, cust, flight);
+							}
+							
 							buyersList.add(ticket);
 						}
 				} catch (SQLException e) {
@@ -679,106 +760,130 @@ public class importControl {
 		
 		
 	//This method will notify the user on the new details of the show
-	/*public static ArrayList<Flight> recommendUserNewDetails(Customer customer)
+	public static ArrayList<Flight> recommendUserNewDetails(FlightTicket customerFlightTicket)
 	{
 		ArrayList<Flight> chacngedFlights = importFlights();
 		
 		//For each flight that the customer has booked and canceled, we will offer alternative offers
 		for (Flight f: chacngedFlights) {
 			//returns all the customers in this flight
-			ArrayList<Customer> customers = getAllTicketByIDS(f);
-			if (customers.contains(customer))
+			ArrayList<FlightTicket> customers = getAllTicketByIDS(f);
+			if (customers.contains(customerFlightTicket))
 			{
 				Airport from = f.getDepartureAirport();
 				Airport to = f.getLandingAirport();
-				LocalDateTime oldFlightDate = f.getDepartureTime().toLocalDateTime(); //because we want the oldDate
-				LocalDateTime dtFrom = oldFlightDate.minusWeeks(2); //this date is the show date minus 2 weeks
-				LocalDateTime dtTo =  oldFlightDate.plusWeeks(2); //this date is the show date plus 2 weeks
+				Timestamp oldFlightDate = f.getDepartureTime(); //because we want the oldDate
+				/*LocalDateTime dtFrom = oldFlightDate.minusWeeks(2); //this date is the flight date minus 2 weeks
+				LocalDateTime dtTo =  oldFlightDate.plusWeeks(2); //this date is the flight date plus 2 weeks
 				LocalDateTime dtNow = LocalDateTime.now();
 				
-				if(dtFrom.isBefore(dtNow))// if we dont have 2 weeks alert
+				if(dtFrom.isBefore(dtNow))// if we don't have 2 weeks alert
 				{
 					dtNow = LocalDateTime.now().plusWeeks(2);
 					dtFrom = dtNow;
-				}
+				}*/
 				
-				ArrayList<Flight> flightList = getAllRecomByParmWithoutSeats(from.getAirportCode(), to.getAirportCode(),dtTo, dtFrom);
+				ArrayList<Flight> flightList = getAllRecomByParmWithoutSeats(oldFlightDate, from.getCity(), from.getCountry(), to.getCity(), to.getCountry(), f.getFlightNum());
 				ArrayList<Flight> toReturn = new ArrayList<Flight>();
 				
 				for(Flight fl: flightList)
 				{
-					if(canBeThere(fl, customer.getAmountOfTickets()))
-						//TODO we need to return also the class of each seat in the order
+					if(canBeThere(fl, getAmountOfTickets(customerFlightTicket.getOrderNum()),customerFlightTicket.getSeatClass()))
 					{
 						toReturn.add(fl);
+						System.out.println(fl.toString());
 					}
 				}	
 				return toReturn;			
 			}
-		}			
+		}
+		return null;			
+	}
+	
+	private static int getAmountOfTickets(int orderNum) {
+		
+		int amountOfTickest = 0;
+
+		try {
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					
+					CallableStatement callst = conn.prepareCall(Consts.TICKETS_IN_ORDER))
+					{
+					int k=1;
+					callst.setLong(k++, orderNum);
+					
+					
+					ResultSet rs = callst.executeQuery();
+					while (rs.next()) {
+						int i = 1;
+						amountOfTickest = rs.getInt(i++);
+	
+					}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return amountOfTickest;	
 	}
 	
 	//This method get airports and dates, then return the all flights between the parm
-	private static ArrayList<Flight> getAllRecomByParmWithoutSeats(String airportCode, String airportCode2,
-			LocalDateTime dtTo, LocalDateTime dtFrom) {
-
+	private static ArrayList<Flight> getAllRecomByParmWithoutSeats(Timestamp oldFlightDate, String city,
+			String country, String city2, String country2, String flightNumber) {
+		
 		ArrayList<Flight> FlightsList = new ArrayList<Flight>();
 		
-		/*int showId;
-		String showName;
-		int showLength;
-		Boolean hasBreak;
-		int theaterId;
-		String theaterName;
-		String managerName;
-		String citySql;
-		int maxCapacity;
-		int maxInCapsule;
-		int price;
-		java.sql.Date dateOfShow; 
-		java.sql.Time startHour;
-		String status;
-		java.sql.Date updateDate;
-		*/
+		String flightNum;
+		Timestamp departureTime;
+		Timestamp landingTime;
+		FlightStatus status;
+		Airplane airplane;
+		Airport departureAirport;
+		Airport landingAirport;
+		Date updateDate;
 				
-		/*try {
+		try {
 			Class.forName(Consts.JDBC_STR);
 			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
-					CallableStatement callst = conn.prepareCall(Consts.SQL_SEL_ALL_SHOWS_RECOM))
+					CallableStatement callst = conn.prepareCall(Consts.FLIGHT_RECOMMENDATION))
 			{
 				int k=1;
-				//callst.setDate(k++, dtPast);
-				callst.setDate(k++, dtFuture);
-				callst.setDate(k++, dtPast);
+				callst.setTimestamp(k++, oldFlightDate);
 				callst.setString(k++, city);
+				callst.setString(k++, country);
+				callst.setString(k++, city2);
+				callst.setString(k++, country2);
+				callst.setString(k++, flightNumber);
 			
 				ResultSet rs = callst.executeQuery();
 				while (rs.next()) 
 				{
 					int i =1;
-					showId = (rs.getInt(i++));
-					showName = (rs.getString(i++));
-					showLength = (rs.getInt(i++));
-					hasBreak = (rs.getBoolean(i++));
-					theaterId = (rs.getInt(i++));
-					theaterName = (rs.getString(i++));
-					managerName =  (rs.getString(i++));
-					citySql = (rs.getString(i++));
-					maxCapacity = (rs.getInt(i++));
-					price = (rs.getInt(i++));
-					maxInCapsule=(rs.getInt(i++));
-					dateOfShow = (rs.getDate(i++));
-					startHour = (rs.getTime(i++));
-					status = (rs.getString(i++));
+					flightNum = (rs.getString(i++));
+					departureTime = (rs.getTimestamp(i++));
+					landingTime = (rs.getTimestamp(i++));
+					
+					if (rs.getString(i++).equals(FlightStatus.cancelled)) {
+						status = FlightStatus.cancelled;
+					}
+					else if (rs.getString(i++).equals(FlightStatus.Delayed)) {
+						status = FlightStatus.Delayed;
+					}
+					else {
+						status = FlightStatus.OnTime;
+					}
+					
+					airplane = getAirplaneByID(rs.getString(i++));
+					departureAirport = getAirportByID(rs.getString(i++));
+					landingAirport = getAirportByID(rs.getString(i++));
 					updateDate = (rs.getDate(i++));
 					
-					Show sh = new Show(showId, showName, showLength, hasBreak);
-					Theater th = new Theater(theaterId, theaterName, maxCapacity, managerName, citySql, maxInCapsule);
-					ShowInTheater shIn = new ShowInTheater(th, sh, dateOfShow, startHour, price, updateDate, status);
-					showList.add(shIn); 
-				}
+					Flight flight = new Flight(flightNum, departureTime, landingTime, status, airplane, departureAirport, landingAirport, updateDate);
 
-				return showList;
+					FlightsList.add(flight); 
+				}
 
 			} catch (SQLException e) {
 
@@ -787,24 +892,81 @@ public class importControl {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return showList;
+		return FlightsList;
 	}
-*/
-	//this method will get ShowInTheater and amount of tickets and return if someone can sit there
-	public static boolean canBeThere(Flight flight, int amount)
+
+	//this method will get flight, amount of tickets, and the seat type and return if someone can sit in this flight
+	public static boolean canBeThere(Flight flight, int amount, SeatClass seatClass)
 	{
 		
 		int maxCapacityInAirplane = flight.getAirplane().getSeats().size();
 		
 		ArrayList<Seat> seats = getSeatsByAirplane(flight.getAirplane());
+		ArrayList<Seat> seatsToReturn = seats;
 		
-		int availableSeats = 0; //TODO find how much available seat exists in this airplane
+		for (Seat seat: seats) {
+			//If the seat is not from the desired class, delete it from the list
+			if (seat.getSeatClass().equals(seatClass)) {
+				seatsToReturn.remove(seat);
+			}
+		}
 		
-		if (amount - availableSeats < maxCapacityInAirplane)	 {
+		//TODO find how much available seat exists in this airplane
+		for (Seat seat: seats) {
+			//find if the seat is already taken and delete it from the list
+			if (FindTicketBySeat(seat)) {
+				seatsToReturn.remove(seat);
+			}
+			
+		}
+
+		int availableSeatsByClass = seatsToReturn.size(); 
+		
+		if (availableSeatsByClass > amount )	 {
+			//if the number of available seats is bigger then the amount we need
 			return true;
 		}
 
 		
 		return false;
 	}
+	
+	private static boolean FindTicketBySeat(Seat seat) {
+
+		boolean isExist = false;
+		int row = 0;
+		String seatNum = "";
+		
+		try {
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					
+					
+					CallableStatement callst = conn.prepareCall(Consts.SEAT_IS_AVAILABLE))
+					{
+					int k=1;
+					callst.setLong(k++, seat.getRowNum());
+					callst.setString(k++, seat.getSeatNum());
+					
+					ResultSet rs = callst.executeQuery();
+					while (rs.next()) {
+						int i = 1;
+						row = rs.getInt(i++);
+						seatNum = rs.getString(i++);
+		
+					}
+					if (row != 0  && !(seatNum.isEmpty())) {
+						isExist = true;
+					}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		return isExist;
+	}
+
 }

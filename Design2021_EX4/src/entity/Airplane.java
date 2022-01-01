@@ -5,6 +5,9 @@ import java.util.HashSet;
 
 public class Airplane {
 	
+	private String tailNumber;
+	private HashSet<Seat> seats = new HashSet<Seat>();
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -30,8 +33,7 @@ public class Airplane {
 		return true;
 	}
 
-	private String tailNumber;
-	private HashSet<Seat> seats = new HashSet<Seat>();
+
 
 	public Airplane(String tailNumber) {
 		super();
