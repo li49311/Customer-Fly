@@ -38,7 +38,7 @@ public class Consts
 
 	public static final String TICKETS_IN_ORDER = "{ call quer_amount_of_tickets_in_order(?) }";
 	public static final String SEAT_IS_AVAILABLE = "{ call quer_seat_is_avialable(?,?) }";
-	public static final String FLIGHT_RECOMMENDATION = "{ call quer_recommendation(?,?,?,?,?,?) }";
+	public static final String SQL_FLIGHT_RECOMMENDATION = "{ call quer_recommend_New_Flights(?,?,?,?,?,?) }";
 	
 /*---------------------------------------------------------------------------------------*/
 	/**

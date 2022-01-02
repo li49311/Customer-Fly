@@ -44,6 +44,18 @@ public class Flight {
 	
 	
 	
+	
+	public Flight(String flightNum, Timestamp departureTime, Timestamp landingTime, Airplane airplane, Airport departureAirport,
+			Airport landingAirport) {
+		super();
+		this.flightNum = flightNum;
+		this.departureTime = departureTime;
+		this.landingTime = landingTime;
+		this.airplane = airplane;
+		this.departureAirport = departureAirport;
+		this.landingAirport = landingAirport;
+	}
+
 	public Flight(String flightNum, String airplane, String departureAirport, String landingAirport) {
 		super();
 		this.flightNum = flightNum;

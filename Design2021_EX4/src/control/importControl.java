@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -482,6 +483,7 @@ public class importControl {
 			ArrayList<Seat> seatsInPlane = new ArrayList<Seat>();
 			int rowNum;
 			String seatNum;
+			String seatClass;
 			
 			try {
 				Class.forName(Consts.JDBC_STR);
@@ -498,8 +500,9 @@ public class importControl {
 							int i =1;
 							rowNum = (rs.getInt(i++));
 							seatNum = (rs.getString(i++));
+							seatClass = (rs.getString(i++));
 							
-							Seat seat = new Seat(rowNum, seatNum, airplane.getTailNumber());
+							Seat seat = new Seat(rowNum, seatNum, seatClass, airplane.getTailNumber());
 							//System.out.println(tB);
 							seatsInPlane.add(seat);
 						}
@@ -773,15 +776,6 @@ public class importControl {
 				Airport from = f.getDepartureAirport();
 				Airport to = f.getLandingAirport();
 				Timestamp oldFlightDate = f.getDepartureTime(); //because we want the oldDate
-				/*LocalDateTime dtFrom = oldFlightDate.minusWeeks(2); //this date is the flight date minus 2 weeks
-				LocalDateTime dtTo =  oldFlightDate.plusWeeks(2); //this date is the flight date plus 2 weeks
-				LocalDateTime dtNow = LocalDateTime.now();
-				
-				if(dtFrom.isBefore(dtNow))// if we don't have 2 weeks alert
-				{
-					dtNow = LocalDateTime.now().plusWeeks(2);
-					dtFrom = dtNow;
-				}*/
 				
 				ArrayList<Flight> flightList = getAllRecomByParmWithoutSeats(oldFlightDate, from.getCity(), from.getCountry(), to.getCity(), to.getCountry(), f.getFlightNum());
 				ArrayList<Flight> toReturn = new ArrayList<Flight>();
@@ -838,19 +832,21 @@ public class importControl {
 		String flightNum;
 		Timestamp departureTime;
 		Timestamp landingTime;
-		FlightStatus status;
-		Airplane airplane;
 		Airport departureAirport;
 		Airport landingAirport;
-		Date updateDate;
+		Airplane airplane;
+		
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		String timeFormat = format.format(oldFlightDate);
+		
 				
 		try {
 			Class.forName(Consts.JDBC_STR);
 			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
-					CallableStatement callst = conn.prepareCall(Consts.FLIGHT_RECOMMENDATION))
+					CallableStatement callst = conn.prepareCall(Consts.SQL_FLIGHT_RECOMMENDATION))
 			{
 				int k=1;
-				callst.setTimestamp(k++, oldFlightDate);
+				callst.setString(k++, timeFormat);
 				callst.setString(k++, city);
 				callst.setString(k++, country);
 				callst.setString(k++, city2);
@@ -865,22 +861,11 @@ public class importControl {
 					departureTime = (rs.getTimestamp(i++));
 					landingTime = (rs.getTimestamp(i++));
 					
-					if (rs.getString(i++).equals(FlightStatus.cancelled)) {
-						status = FlightStatus.cancelled;
-					}
-					else if (rs.getString(i++).equals(FlightStatus.Delayed)) {
-						status = FlightStatus.Delayed;
-					}
-					else {
-						status = FlightStatus.OnTime;
-					}
-					
-					airplane = getAirplaneByID(rs.getString(i++));
 					departureAirport = getAirportByID(rs.getString(i++));
 					landingAirport = getAirportByID(rs.getString(i++));
-					updateDate = (rs.getDate(i++));
+					airplane = getAirplaneByID(rs.getString(i++));
 					
-					Flight flight = new Flight(flightNum, departureTime, landingTime, status, airplane, departureAirport, landingAirport, updateDate);
+					Flight flight = new Flight(flightNum, departureTime, landingTime, airplane, departureAirport, landingAirport);
 
 					FlightsList.add(flight); 
 				}
@@ -898,23 +883,13 @@ public class importControl {
 	//this method will get flight, amount of tickets, and the seat type and return if someone can sit in this flight
 	public static boolean canBeThere(Flight flight, int amount, SeatClass seatClass)
 	{
-		
-		int maxCapacityInAirplane = flight.getAirplane().getSeats().size();
-		
 		ArrayList<Seat> seats = getSeatsByAirplane(flight.getAirplane());
 		ArrayList<Seat> seatsToReturn = seats;
 		
+		
 		for (Seat seat: seats) {
 			//If the seat is not from the desired class, delete it from the list
-			if (seat.getSeatClass().equals(seatClass)) {
-				seatsToReturn.remove(seat);
-			}
-		}
-		
-		//TODO find how much available seat exists in this airplane
-		for (Seat seat: seats) {
-			//find if the seat is already taken and delete it from the list
-			if (FindTicketBySeat(seat)) {
+			if (seat.getSeatClass().equals(seatClass.toString())) {
 				seatsToReturn.remove(seat);
 			}
 			
@@ -922,51 +897,12 @@ public class importControl {
 
 		int availableSeatsByClass = seatsToReturn.size(); 
 		
-		if (availableSeatsByClass > amount )	 {
+		if (availableSeatsByClass >= amount )	 {
 			//if the number of available seats is bigger then the amount we need
 			return true;
 		}
-
 		
 		return false;
-	}
-	
-	private static boolean FindTicketBySeat(Seat seat) {
-
-		boolean isExist = false;
-		int row = 0;
-		String seatNum = "";
-		
-		try {
-			Class.forName(Consts.JDBC_STR);
-			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
-					
-					
-					CallableStatement callst = conn.prepareCall(Consts.SEAT_IS_AVAILABLE))
-					{
-					int k=1;
-					callst.setLong(k++, seat.getRowNum());
-					callst.setString(k++, seat.getSeatNum());
-					
-					ResultSet rs = callst.executeQuery();
-					while (rs.next()) {
-						int i = 1;
-						row = rs.getInt(i++);
-						seatNum = rs.getString(i++);
-		
-					}
-					if (row != 0  && !(seatNum.isEmpty())) {
-						isExist = true;
-					}
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		return isExist;
 	}
 
 }

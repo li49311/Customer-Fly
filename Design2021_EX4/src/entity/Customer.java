@@ -4,6 +4,26 @@ import java.sql.Date;
 
 public class Customer {
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + passportNum;
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Customer other = (Customer) obj;
+		if (passportNum != other.passportNum)
+			return false;
+		return true;
+	}
 	private int passportNum;
 	private String firstName;
 	private String lastName;

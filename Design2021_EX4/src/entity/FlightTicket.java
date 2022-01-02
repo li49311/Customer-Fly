@@ -59,6 +59,33 @@ public class FlightTicket {
 	public void setFlight(Flight flight) {
 		this.flight = flight;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + orderNum;
+		result = prime * result + ticketNum;
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FlightTicket other = (FlightTicket) obj;
+		if (orderNum != other.orderNum)
+			return false;
+		if (ticketNum != other.ticketNum)
+			return false;
+		return true;
+	}
 	
 
 	

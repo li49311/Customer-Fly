@@ -81,11 +81,11 @@
 			]
 		},
 		{
-			"FlightNum" : "8",
+			"FlightNum" : "15",
 			"DepartureTime":"2022-02-28 06:00:00.000000",
 			"LandingTime" : "2022-02-27 08:00:00.000000",
 			"Status":"OnTime",
-			"TailNumber":"4X-ABc",
+			"TailNumber":"4X-ABB",
 			"DepartureAirportCode":"TLV",
 			"LandingAirportCode":"ATH",
 			"DepartureCity" : "Tel Aviv",

@@ -1,5 +1,6 @@
 package boundary;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,16 +17,25 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.stage.Popup;
+import javafx.stage.Stage;
 import javafx.scene.control.Alert.AlertType;
 import util.FlightStatus;
 
 public class ImportUpdates {
+	@FXML
+	private AnchorPane popUpPane;
 	
 	@FXML
 	ListView CustomerList;
@@ -75,7 +85,6 @@ public class ImportUpdates {
 	public void initialize() {
 
 		notifyButton.setDisable(true);
-		
 	  	
 	}
 
@@ -130,6 +139,7 @@ public class ImportUpdates {
 	@FXML
 	private void notifyUser(ActionEvent event)
 	{
+		ArrayList<Flight> flights = null;
 		messageLbl.setText("");
 		String message;
 		String updateMessage;
@@ -150,13 +160,9 @@ public class ImportUpdates {
 		
 			message = "Dear " + selectCustomer.getCustomer().getFirstName() + ",\n"+updateMessage+"\nThis is your flight recommendations if you would like to choose a new flight: \n";
 			
-			ArrayList<Flight> flights = importControl.recommendUserNewDetails(selectCustomer);
+			flights = importControl.recommendUserNewDetails(selectCustomer);
+			System.out.println(flights);
 			System.out.println(message);
-		
-			for(Flight f :flights)
-			{
-				message+= f+"\n";
-			}
 			
 			if(flights.isEmpty())
 			{
@@ -166,13 +172,49 @@ public class ImportUpdates {
 		else
 		{
 			message="Please select custumer to call";
-		}
-			
-		Alert alert = new Alert(AlertType.INFORMATION, "" + message);
-		alert.setHeaderText("Alternative flight recommendations");
-		alert.setTitle("Alternative flight recommendations");
-		alert.showAndWait();
-		messageLbl.setText(message);	
+		}	
+		
+		Stage newStage = new Stage();
+		VBox comp = new VBox();
+		Label nameField = new Label(message);
+		nameField.setFont(new Font("Arial", 18));
+		TableView<Flight> tableRecommendation = new TableView<Flight>();
+		tableRecommendation.setPrefWidth(400);
+		tableRecommendation.setPrefHeight(200);
+		TableColumn<Flight, String> flightNum = new TableColumn<>("FlightID");;
+		TableColumn<Flight, LocalDateTime> departureTime = new TableColumn<>("DepartureTime");;
+		TableColumn<Flight, LocalDateTime> landingTime = new TableColumn<>("LandingTime");;
+		TableColumn<Flight, String> departureAirport = new TableColumn<>("DepartureAirport");;
+		TableColumn<Flight, String> landingAirport = new TableColumn<>("LandingAirport");;
+		
+		flightNum.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<String>(flight.getValue().getFlightNum()));
+		departureTime.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<LocalDateTime>(flight.getValue().getDepartureTime().toLocalDateTime()));
+		landingTime.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<LocalDateTime>(flight.getValue().getLandingTime().toLocalDateTime()));	
+		departureAirport.setCellValueFactory(flight -> {
+			Airport origin = importControl.getInstance().getAirportByID(flight.getValue().getDepartureAirport().getAirportCode());
+			String originAirport = origin.getCity() + ", " + origin.getCountry();
+			return new ReadOnlyStringWrapper(originAirport);
+		});
+		
+		landingAirport.setCellValueFactory(flight -> {
+			Airport destination = importControl.getInstance().getAirportByID(flight.getValue().getLandingAirport().getAirportCode());
+			String destinationAirport = destination.getCity() + ", " + destination.getCountry();
+			return new ReadOnlyStringWrapper(destinationAirport);
+		});
+		
+		tableRecommendation.getColumns().addAll(flightNum, departureTime, landingTime, departureAirport, landingAirport);
+		tableRecommendation.setItems(FXCollections.observableArrayList(flights));	
+		
+
+		comp.getChildren().add(new Label());
+		comp.getChildren().add(nameField);
+		comp.getChildren().add(new Label());
+		comp.getChildren().add(tableRecommendation);
+		
+		Scene stageScene = new Scene(comp, 600, 350);
+		newStage.setTitle("Alternative flight recommendations");
+		newStage.setScene(stageScene);
+		newStage.show();
 	}
 	
 	
@@ -182,6 +224,4 @@ public class ImportUpdates {
 		reportFrame.setVisible(true);
 	}
 	
-	
-
 }
