@@ -1,16 +1,18 @@
 package entity;
 
+import util.SeatClass;
+
 public class Seat {
 	
 	private int rowNum;
 	private String seatNum;
-	private String seatClass;
+	private SeatClass seatClass;
 	private String tailNumber;
 	public Seat(int rowNum, String seatNum, String seatClass, String tailNumber) {
 		super();
 		this.rowNum = rowNum;
 		this.seatNum = seatNum;
-		this.seatClass = seatClass;
+		this.seatClass = SeatClass.valueOf(seatClass);
 		this.tailNumber = tailNumber;
 	}
 	public Seat(int rowNum, String seatNum, String tailNumber) {
@@ -57,10 +59,10 @@ public class Seat {
 	public void setSeatNum(String seatNum) {
 		this.seatNum = seatNum;
 	}
-	public String getSeatClass() {
+	public SeatClass getSeatClass() {
 		return seatClass;
 	}
-	public void setSeatClass(String seatClass) {
+	public void setSeatClass(SeatClass seatClass) {
 		this.seatClass = seatClass;
 	}
 	public String getTailNumber() {

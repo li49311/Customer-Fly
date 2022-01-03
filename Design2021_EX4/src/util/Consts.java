@@ -25,6 +25,11 @@ public class Consts
 	public static final String SQL_SEL_AIRPORTS = "SELECT tbl_Airport.* FROM tbl_Airport";
 	public static final String SQL_SEL_AIRPLANE = "SELECT tbl_Airplane.* FROM tbl_Airplane";
 	
+	public static final String SQL_FLIGHT_BY_UPDATE_DATE = "SELECT tbl_Flight.FlightNum, tbl_Flight.DepartureTime, tbl_Flight.LandingTime, tbl_Flight.Status, tbl_Flight.TailNumber, tbl_Flight.DepartureAirportCode, tbl_Flight.DestinationAirportCode\r\n"
+			+ "FROM tbl_Flight\r\n"
+			+ "WHERE (((tbl_Flight.updateDate)=Date()));\r\n"
+			+ "";
+	
 	public static final String SQL_AIRPLANE_EXIST = "call quer_is_airplane_exist(?)";
 	public static final String SQL_AIRPORT_EXIST = "call quer_is_airport_exist(?)";
 	
@@ -35,6 +40,7 @@ public class Consts
 	
 	public static final String SQL_UPDATE_AIRPORT = "{ call quer_update_airport(?,?,?) }";
 	public static final String SQL_UPDATE_FLIGHT = "{ call quer_update_flight(?,?,?,?,?,?,?,?) }";
+	public static final String SQL_UPDATE_TICKET = "{ call quer_update_ticket(?,?) }";
 
 	public static final String TICKETS_IN_ORDER = "{ call quer_amount_of_tickets_in_order(?) }";
 	public static final String SEAT_IS_AVAILABLE = "{ call quer_seat_is_avialable(?,?) }";

@@ -14,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -156,7 +155,7 @@ public class importControl {
 		int hourDate = Integer.parseInt(hour);
 		int minutesDate = Integer.parseInt(minutes);
 		LocalDateTime date2 = LocalDateTime.of(yearDate, monthDate, dayDate, hourDate, minutesDate);
-		Timestamp myTime =Timestamp.valueOf(date2);
+		Timestamp myTime = Timestamp.valueOf(date2);
 		return myTime;		
 	}
 	
@@ -552,17 +551,7 @@ public class importControl {
 							seatClass = (rs.getString(i++));
 							
 							Customer cust = new Customer(passportNum, fname, lname, mail);
-							FlightTicket ticket;
-							
-							if (SeatClass.business.equals(seatClass)){
-								ticket = new FlightTicket(orderNum, ticketNum, SeatClass.business, cust, flight);
-							}
-							else if (SeatClass.economy.equals(seatClass)){
-								ticket = new FlightTicket(orderNum, ticketNum, SeatClass.economy, cust, flight);
-							}
-							else { //SeatClass = firstClass
-								ticket = new FlightTicket(orderNum, ticketNum, SeatClass.firstClass, cust, flight);
-							}
+							FlightTicket ticket = new FlightTicket(orderNum, ticketNum, SeatClass.valueOf(seatClass), cust, flight);;
 							
 							buyersList.add(ticket);
 						}
@@ -581,7 +570,6 @@ public class importControl {
 			{
 				return false;
 			}	
-			//inserting to showInTheater
 			Class.forName(Consts.JDBC_STR);
 			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
 					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_UPDATE_FLIGHT)){
@@ -680,7 +668,7 @@ public class importControl {
 				stmt.setInt(i++, s.getRowNum());
 				stmt.setString(i++, s.getSeatNum());
 				stmt.setString(i++, s.getTailNumber());
-				stmt.setString(i++, s.getSeatClass());
+				stmt.setString(i++, s.getSeatClass().toString());
 				
 				stmt.executeUpdate();
 				
@@ -764,63 +752,72 @@ public class importControl {
 		
 	//This method will notify the user on the new details of the show
 	public static ArrayList<Flight> recommendUserNewDetails(FlightTicket customerFlightTicket)
-	{
-		ArrayList<Flight> chacngedFlights = importFlights();
-		
-		//For each flight that the customer has booked and canceled, we will offer alternative offers
-		for (Flight f: chacngedFlights) {
-			//returns all the customers in this flight
-			ArrayList<FlightTicket> customers = getAllTicketByIDS(f);
-			if (customers.contains(customerFlightTicket))
+	{		
+			cancelledTicket(customerFlightTicket);
+			Airport from = customerFlightTicket.getFlight().getDepartureAirport();
+			Airport to = customerFlightTicket.getFlight().getLandingAirport();
+			Timestamp oldFlightDate = customerFlightTicket.getFlight().getDepartureTime(); //because we want the oldDate				
+			ArrayList<Flight> flightList = getAllRecomByParmWithoutSeats(oldFlightDate, from.getCity(), from.getCountry(), to.getCity(),
+					to.getCountry(), customerFlightTicket.getFlight().getFlightNum());
+			ArrayList<Flight> toReturn = new ArrayList<Flight>();
+				
+			for(Flight fl: flightList)
 			{
-				Airport from = f.getDepartureAirport();
-				Airport to = f.getLandingAirport();
-				Timestamp oldFlightDate = f.getDepartureTime(); //because we want the oldDate
-				
-				ArrayList<Flight> flightList = getAllRecomByParmWithoutSeats(oldFlightDate, from.getCity(), from.getCountry(), to.getCity(), to.getCountry(), f.getFlightNum());
-				ArrayList<Flight> toReturn = new ArrayList<Flight>();
-				
-				for(Flight fl: flightList)
+				if(canBeThere(fl ,customerFlightTicket.getSeatClass()))
 				{
-					if(canBeThere(fl, getAmountOfTickets(customerFlightTicket.getOrderNum()),customerFlightTicket.getSeatClass()))
-					{
-						toReturn.add(fl);
-						System.out.println(fl.toString());
-					}
-				}	
-				return toReturn;			
-			}
-		}
-		return null;			
+					toReturn.add(fl);
+				}
+			}	
+			return toReturn;					
 	}
 	
-	private static int getAmountOfTickets(int orderNum) {
-		
-		int amountOfTickest = 0;
-
+	private static boolean cancelledTicket(FlightTicket customerFlightTicket) {
 		try {
 			Class.forName(Consts.JDBC_STR);
 			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
-					
-					CallableStatement callst = conn.prepareCall(Consts.TICKETS_IN_ORDER))
-					{
-					int k=1;
-					callst.setLong(k++, orderNum);
-					
-					
-					ResultSet rs = callst.executeQuery();
-					while (rs.next()) {
-						int i = 1;
-						amountOfTickest = rs.getInt(i++);
-	
-					}
+					CallableStatement stmt =  conn.prepareCall(util.Consts.SQL_UPDATE_TICKET)){
+				int i = 1;
+				stmt.setInt(i++, customerFlightTicket.getOrderNum());
+				stmt.setInt(i++, customerFlightTicket.getTicketNum());
+
+				
+				stmt.executeUpdate();
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	private static ArrayList<Flight> getFlightByUpdateDate() {
+		ArrayList<Flight> flightList = new ArrayList<Flight>();
+				
+		try {
+			Class.forName(Consts.JDBC_STR);
+			try (Connection conn = DriverManager.getConnection(util.Consts.CONN_STR);
+					PreparedStatement callst = conn.prepareStatement(Consts.SQL_FLIGHT_BY_UPDATE_DATE))
+			{			
+				ResultSet rs = callst.executeQuery();
+				while (rs.next()) 
+				{
+					int i =1;
+					flightList.add(new Flight(rs.getString(i++),rs.getTimestamp(i++), rs.getTimestamp(i++), FlightStatus.valueOf(rs.getString(i++)),
+							getAirplaneByID(rs.getString(i++)),getAirportByID(rs.getString(i++)), getAirportByID(rs.getString(i++))));
+
+				}
+
 			} catch (SQLException e) {
+
 				e.printStackTrace();
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return amountOfTickest;	
+		return flightList;
 	}
 	
 	//This method get airports and dates, then return the all flights between the parm
@@ -881,7 +878,7 @@ public class importControl {
 	}
 
 	//this method will get flight, amount of tickets, and the seat type and return if someone can sit in this flight
-	public static boolean canBeThere(Flight flight, int amount, SeatClass seatClass)
+	public static boolean canBeThere(Flight flight, SeatClass seatClass)
 	{
 		ArrayList<Seat> seats = getSeatsByAirplane(flight.getAirplane());
 		ArrayList<Seat> seatsToReturn = seats;
@@ -897,7 +894,7 @@ public class importControl {
 
 		int availableSeatsByClass = seatsToReturn.size(); 
 		
-		if (availableSeatsByClass >= amount )	 {
+		if (availableSeatsByClass >= 1 )	 {
 			//if the number of available seats is bigger then the amount we need
 			return true;
 		}

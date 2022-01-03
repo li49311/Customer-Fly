@@ -9,9 +9,13 @@ import java.util.List;
 import javax.swing.JFrame;
 import control.ControlReport;
 import control.importControl;
+import entity.Airplane;
 import entity.Airport;
 import entity.Flight;
 import entity.FlightTicket;
+import entity.Seat;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -32,6 +36,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert.AlertType;
 import util.FlightStatus;
+import util.SeatClass;
 
 public class ImportUpdates {
 	@FXML
@@ -78,6 +83,8 @@ public class ImportUpdates {
 
 	List<Flight> allFlights = new ArrayList<Flight>();
 	
+	private static List<FlightTicket> customersCanSeat = importControl.getCustmersCantSeat();
+	
 	
 	
 	
@@ -87,17 +94,10 @@ public class ImportUpdates {
 		notifyButton.setDisable(true);
 	  	
 	}
-
-
 	@FXML
-	public void importJSON(ActionEvent event)
-	{
+	public void importJSON(ActionEvent event) {
 		HashMap<Flight, ArrayList<FlightTicket>> flightsAndTickets = importControl.getAllNeedToCall();
 		addToList(flightsAndTickets);
-		
-		System.out.println(importControl.getCustmersCantSeat());
-		
-		CustomerList.setItems(FXCollections.observableArrayList(importControl.getCustmersCantSeat()));	
 		
 		
 		notifyButton.setDisable(false);
@@ -107,10 +107,17 @@ public class ImportUpdates {
 	@FXML
 	private void addToList(HashMap<Flight, ArrayList<FlightTicket>> flightsAndTickets)
 	{
+		
 		ArrayList<Flight> problematicFlights = new ArrayList<>();
-		for(Flight flight: flightsAndTickets.keySet()) 
+		ArrayList<FlightTicket> problematicTickets = new ArrayList<>();
+		for(Flight flight: flightsAndTickets.keySet()) {
 			problematicFlights.add(flight);
-			
+			problematicTickets.addAll(flightsAndTickets.get(flight));
+		}
+		
+		
+		CustomerList.setItems(FXCollections.observableArrayList(problematicTickets));	
+					
 		//fill table
 		
 		allFlightsTable.getItems().addAll(problematicFlights);
@@ -119,13 +126,13 @@ public class ImportUpdates {
 		departureCol.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<LocalDateTime>(flight.getValue().getDepartureTime().toLocalDateTime()));
 		landingCol.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<LocalDateTime>(flight.getValue().getLandingTime().toLocalDateTime()));	
 		fromCol.setCellValueFactory(flight -> {
-			Airport origin = importControl.getInstance().getAirportByID(flight.getValue().getDepartureAirport().getAirportCode());
+			Airport origin = flight.getValue().getDepartureAirport();
 			String originAirport = origin.getCity() + ", " + origin.getCountry();
 			return new ReadOnlyStringWrapper(originAirport);
 		});
 		
 		toCol.setCellValueFactory(flight -> {
-			Airport destination = importControl.getInstance().getAirportByID(flight.getValue().getLandingAirport().getAirportCode());
+			Airport destination = flight.getValue().getLandingAirport();
 			String destinationAirport = destination.getCity() + ", " + destination.getCountry();
 			return new ReadOnlyStringWrapper(destinationAirport);
 		});
@@ -143,19 +150,17 @@ public class ImportUpdates {
 		messageLbl.setText("");
 		String message;
 		String updateMessage;
-		
-		if(CustomerList.getSelectionModel().getSelectedItem() != null) // select from list
-		{
-			FlightTicket selectCustomer = (FlightTicket) CustomerList.getSelectionModel().getSelectedItem();
-		
+		FlightTicket selectCustomer = (FlightTicket) CustomerList.getSelectionModel().getSelectedItem();
+		if(selectCustomer != null) // select from list
+		{	
 			//TODO Add a test that checks whether the flight is also in the "canceled" status
-			if(importControl.getCustmersCantSeat().contains(selectCustomer))
+			if(customersCanSeat.contains(selectCustomer) || selectCustomer.getFlight().getStatus().equals(FlightStatus.cancelled))
 			{//if the flight is canceled 
 				updateMessage="Unfornatnatly we had to cancel your order";			
 			}
 			else
 			{
-				updateMessage="Unfornatnatly we had to update your order Details. \nThis is the new details: \n" +selectCustomer.getFlight().getFlightNum();
+				updateMessage="Unfornatnatly we had to update your order Details for flight: " + selectCustomer.getFlight().getFlightNum();
 			}
 		
 			message = "Dear " + selectCustomer.getCustomer().getFirstName() + ",\n"+updateMessage+"\nThis is your flight recommendations if you would like to choose a new flight: \n";
@@ -176,6 +181,8 @@ public class ImportUpdates {
 		
 		Stage newStage = new Stage();
 		VBox comp = new VBox();
+		comp.setPrefHeight(600);
+		comp.setPrefWidth(400);
 		Label nameField = new Label(message);
 		nameField.setFont(new Font("Arial", 18));
 		TableView<Flight> tableRecommendation = new TableView<Flight>();
@@ -191,13 +198,13 @@ public class ImportUpdates {
 		departureTime.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<LocalDateTime>(flight.getValue().getDepartureTime().toLocalDateTime()));
 		landingTime.setCellValueFactory(flight -> new ReadOnlyObjectWrapper<LocalDateTime>(flight.getValue().getLandingTime().toLocalDateTime()));	
 		departureAirport.setCellValueFactory(flight -> {
-			Airport origin = importControl.getInstance().getAirportByID(flight.getValue().getDepartureAirport().getAirportCode());
+			Airport origin = flight.getValue().getDepartureAirport();
 			String originAirport = origin.getCity() + ", " + origin.getCountry();
 			return new ReadOnlyStringWrapper(originAirport);
 		});
 		
 		landingAirport.setCellValueFactory(flight -> {
-			Airport destination = importControl.getInstance().getAirportByID(flight.getValue().getLandingAirport().getAirportCode());
+			Airport destination = flight.getValue().getLandingAirport();
 			String destinationAirport = destination.getCity() + ", " + destination.getCountry();
 			return new ReadOnlyStringWrapper(destinationAirport);
 		});
@@ -209,9 +216,11 @@ public class ImportUpdates {
 		comp.getChildren().add(new Label());
 		comp.getChildren().add(nameField);
 		comp.getChildren().add(new Label());
-		comp.getChildren().add(tableRecommendation);
-		
-		Scene stageScene = new Scene(comp, 600, 350);
+		if(!flights.isEmpty())
+			comp.getChildren().add(tableRecommendation);
+		comp.getChildren().add(new Label());
+		comp.getChildren().add(new Label("This message sent to: " + selectCustomer.getCustomer().getEmail()));
+		Scene stageScene = new Scene(comp, 630, 400);
 		newStage.setTitle("Alternative flight recommendations");
 		newStage.setScene(stageScene);
 		newStage.show();

@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.ImportUpdates">
+<AnchorPane prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.ImportUpdates">
    <children>
       <Text fill="#35a5d5" layoutX="258.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Get Data From Manager-Fly System: " underline="true">
          <font>
@@ -22,7 +22,7 @@
          </font>
       </Button>
       <ListView fx:id="CustomerList" layoutX="105.0" layoutY="384.0" prefHeight="170.0" prefWidth="689.0" />
-      <Label fx:id="label" layoutX="105.0" layoutY="358.0" text="List of changes - Please select a customer and press notify">
+      <Label fx:id="label" layoutX="105.0" layoutY="358.0" text="List of affected tickets- choose which you want to cancal">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
@@ -33,13 +33,13 @@
          </font>
       </Button>
       <Label fx:id="messageLbl" layoutX="451.0" layoutY="610.0" />
-      <Button layoutX="105.0" layoutY="568.0" mnemonicParsing="false" onAction="#Report" text="Report" />
+      <Button layoutX="500.0" layoutY="690.0" mnemonicParsing="false" onAction="#Report" prefHeight="32.0" prefWidth="111.0" text="Orders Report" />
       <Label fx:id="label1" layoutX="105.0" layoutY="123.0" text="List of changes flights:">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <TableView fx:id="allFlightsTable" layoutX="105.0" layoutY="149.0" prefHeight="200.0" prefWidth="689.0">
+      <TableView fx:id="allFlightsTable" layoutX="105.0" layoutY="149.0" prefHeight="200.0" prefWidth="768.0">
         <columns>
           <TableColumn fx:id="flightIDCol" prefWidth="75.0" text="Number" />
           <TableColumn fx:id="departureCol" prefWidth="121.33335876464844" text="Departure" />
@@ -50,5 +50,10 @@
             <TableColumn fx:id="airplaneIDCol" prefWidth="82.0" text="Airplane" />
         </columns>
       </TableView>
+      <Label fx:id="label2" layoutX="41.0" layoutY="693.0" text="Produce Report to see the preferences of the customers:">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

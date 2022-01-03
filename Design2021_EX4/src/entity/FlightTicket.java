@@ -24,8 +24,7 @@ public class FlightTicket {
 	
 	@Override
 	public String toString() {
-		return "FlightTicket [orderNum=" + orderNum + ", ticketNum=" + ticketNum + ", seatClass=" + seatClass
-				+ ", customer=" + customer + ", flight=" + flight + "]";
+		return "customer-" + customer + ", flight=" + flight + " class- " + seatClass;
 	}
 
 

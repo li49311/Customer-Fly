@@ -319,26 +319,6 @@
 					"Class":"first"
 				}
 			]
-		},
-		{
-		"FlightNum" : "6",
-			"DepartureTime":"2022-02-27 06:00:00.000000",
-			"LandingTime" : "2022-02-27 12:00:00.000000",
-			"Status":"Delayed",
-			"TailNumber":"4X-ABQ",
-			"DepartureAirportCode":"TLV",
-			"LandingAirportCode":"IBZ",
-			"DepartureCity" : "Tel Aviv",
-			"DepartureCountry" : "Israel",
-			"DestinationCity" : "Ibiza",
-			"DestinationCountry" : "Spain",
-			"SeatsInFlight":[
-				{
-					"Row":"1"
-					"Seat":"A"
-					"Class":"first"
-				}
-			]
 		}
 	]
 }

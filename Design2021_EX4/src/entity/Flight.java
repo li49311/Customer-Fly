@@ -115,7 +115,8 @@ public class Flight {
 
 	@Override
 	public String toString() {
-		return "flightNum=" + flightNum + ", departureTime=" + departureTime + ", landingTime=" + landingTime;
+		return "flightNum-" + flightNum + ", departureTime-" + departureTime + ", landingTime-" + landingTime 
+				+ "from- " + departureAirport.getAirportCode() + " to- " + landingAirport.getAirportCode();
 	}
 	
 	
