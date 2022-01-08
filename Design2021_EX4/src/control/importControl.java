@@ -406,19 +406,6 @@ public class importControl {
 				}
 			}
 			
-//			for(Integer orderNum: orders.keySet()) {
-//				if(economyCount + economyTickets.get(orderNum).size() <= maxCapacity.get("economy")) 
-//					economyCount += economyTickets.get(orderNum).size();
-//				if(buisnessCount + buisnessTickets.get(orderNum).size() <= maxCapacity.get("buisness")) 
-//					buisnessCount += buisnessTickets.get(orderNum).size();
-//				if(firstCount + firstTickets.get(orderNum).size() <= maxCapacity.get("first")) 
-//					firstCount += firstTickets.get(orderNum).size();
-//				
-//				if(economyCount > maxCapacity.get("economy") || buisnessCount > maxCapacity.get("buisness") || firstCount > maxCapacity.get("first")) {
-//					toReturn.addAll(orders.get(orderNum));
-//				}
-//			}
-			
 			for(Integer order: orders.keySet()) {
 				SeatClass seatClass = orders.get(order).get(0).getSeatClass();
 				if(seatClass.equals("economy") && economyCount + orders.get(order).size() <= maxCapacity.get("economy")) 
