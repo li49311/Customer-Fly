@@ -1,3 +1,3 @@
 @ECHO OFF
-java -jar Design.jar
+java -jar design.jar
 PAUSE
