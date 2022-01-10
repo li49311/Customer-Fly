@@ -17,11 +17,13 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -138,7 +140,7 @@ public class ImportUpdates {
 	{
 		ArrayList<Flight> flights = null;
 		messageLbl.setText("");
-		String message;
+		String message = "";
 		String updateMessage;
 		FlightTicket selectCustomer = (FlightTicket) CustomerList.getSelectionModel().getSelectedItem();
 		if(selectCustomer != null) // select from list
@@ -150,14 +152,12 @@ public class ImportUpdates {
 			}
 			else
 			{
-				updateMessage="Unfornatnatly we had to update your order Details for flight: " + selectCustomer.getFlight().getFlightNum();
+				updateMessage="Unfornatnatly we had to cancel your order for flight: " + selectCustomer.getFlight().getFlightNum();
 			}
 		
 			message = "Dear " + selectCustomer.getCustomer().getFirstName() + ",\n"+updateMessage+"\nThis is your flight recommendations if you would like to choose a new flight: \n";
 			
 			flights = importControl.recommendUserNewDetails(selectCustomer);
-			System.out.println(flights);
-			System.out.println(message);
 			
 			if(flights.isEmpty())
 			{
@@ -166,7 +166,10 @@ public class ImportUpdates {
 		}
 		else
 		{
-			message="Please select custumer to call";
+			Alert alert = new Alert(AlertType.ERROR, "You must choose Customer from the list");
+			alert.setHeaderText("Error");
+			alert.setTitle("Error");
+			alert.showAndWait();
 		}	
 		
 		Stage newStage = new Stage();
@@ -199,21 +202,23 @@ public class ImportUpdates {
 			return new ReadOnlyStringWrapper(destinationAirport);
 		});
 		
-		tableRecommendation.getColumns().addAll(flightNum, departureTime, landingTime, departureAirport, landingAirport);
-		tableRecommendation.setItems(FXCollections.observableArrayList(flights));	
+		if(selectCustomer != null) {
+			tableRecommendation.getColumns().addAll(flightNum, departureTime, landingTime, departureAirport, landingAirport);
+			tableRecommendation.setItems(FXCollections.observableArrayList(flights));	
 		
 
-		comp.getChildren().add(new Label());
-		comp.getChildren().add(nameField);
-		comp.getChildren().add(new Label());
-		if(!flights.isEmpty())
-			comp.getChildren().add(tableRecommendation);
-		comp.getChildren().add(new Label());
-		comp.getChildren().add(new Label("This message sent to: " + selectCustomer.getCustomer().getEmail()));
-		Scene stageScene = new Scene(comp, 630, 400);
-		newStage.setTitle("Alternative flight recommendations");
-		newStage.setScene(stageScene);
-		newStage.show();
+			comp.getChildren().add(new Label());
+			comp.getChildren().add(nameField);
+			comp.getChildren().add(new Label());
+			if(!flights.isEmpty())
+				comp.getChildren().add(tableRecommendation);
+			comp.getChildren().add(new Label());
+			comp.getChildren().add(new Label("This message sent to: " + selectCustomer.getCustomer().getEmail()));
+			Scene stageScene = new Scene(comp, 630, 400);
+			newStage.setTitle("Alternative flight recommendations");
+			newStage.setScene(stageScene);
+			newStage.show();
+		}
 	}
 	
 	

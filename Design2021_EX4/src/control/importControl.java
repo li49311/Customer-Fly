@@ -100,7 +100,6 @@ public class importControl {
 				Airport from = new Airport(departureAirportCode, departureCity, departureCountry);
 				Airport to = new Airport(landingAirportCode, landingCity, landingCountry);
 				Airplane airplane = new Airplane(tailNumber, seatsInAirplane);
-				System.out.println(seatsInAirplane);
 				
 				Flight flight = new Flight(flightNum, departureTime, landingTime, FlightStatus.valueOf(status), airplane, from, to);
 
@@ -112,7 +111,6 @@ public class importControl {
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			//System.out.println(e.getMessage());
 		} 
 		return ourJsonResult;		
 	}
@@ -195,7 +193,6 @@ public class importControl {
 					toUpdate.add(value);
 					updateFlight(value);
 					++counterUpdate;
-					//System.out.println("update "+ value);
 					custmersCantSeat.addAll(isProblemWithUpdateSeats(value)); // this will save all the problematic customers 				
 				}
 				else // insert
@@ -207,7 +204,6 @@ public class importControl {
 			}
 			catch(ClassNotFoundException| SQLException e)
 			{
-				//System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
 
@@ -489,7 +485,6 @@ public class importControl {
 							seatClass = (rs.getString(i++));
 							
 							Seat seat = new Seat(rowNum, seatNum, seatClass, airplane.getTailNumber());
-							//System.out.println(tB);
 							seatsInPlane.add(seat);
 						}
 				} catch (SQLException e) {
@@ -605,7 +600,6 @@ public class importControl {
 			
 			if(!isExistAirport(flight.getLandingAirport()))
 			{
-				System.out.println(flight.getLandingAirport().getAirportCode());
 				insertAirport(flight.getLandingAirport());
 			}
 						
